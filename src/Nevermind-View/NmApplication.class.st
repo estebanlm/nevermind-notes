@@ -13,11 +13,23 @@ NmApplication class >> applicationName [
 	^ 'notes'
 ]
 
+{ #category : #'accessing icons' }
+NmApplication >> buttonIconNamed: aString [
+
+	^ GtkImage newIconForButtonNamed: aString
+]
+
 { #category : #accessing }
 NmApplication >> defaultMainWindowExtent [
 
 	self flag: #TODO. "Take from configuration".
 	^ 800@800
+]
+
+{ #category : #'accessing icons' }
+NmApplication >> iconNamed: aString [
+
+	^ self buttonIconNamed: aString
 ]
 
 { #category : #initialization }
@@ -32,6 +44,12 @@ NmApplication >> initialize [
 NmApplication >> initializeModel [
 	
 	NmModelApplication reset
+]
+
+{ #category : #'accessing icons' }
+NmApplication >> menuIconNamed: aString [
+
+	^ GtkImage newIconForMenuNamed: aString
 ]
 
 { #category : #accessing }

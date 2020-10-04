@@ -3,7 +3,8 @@ Class {
 	#superclass : #SpPresenter,
 	#instVars : [
 		'sourceView',
-		'note'
+		'note',
+		'actionBar'
 	],
 	#category : #'Nevermind-View-Notebook'
 }
@@ -12,10 +13,17 @@ Class {
 NmNotePresenter >> initializePresenters [
 
 	self layout: (SpBoxLayout newVertical
+		add: (actionBar := self newActionBar) expand: false;
 		add: (self newGtkWidget
 			widget: self newSourceView;
 			yourself);
-		yourself)
+		yourself).
+		
+	actionBar 
+		addLast: (self newButton 
+			icon: (self application buttonIconNamed: 'document-export');
+			action: [ self doExport ];
+			yourself)
 ]
 
 { #category : #initialization }

@@ -22,8 +22,8 @@ NmNotebookPresenter class >> defaultSpec [
 	^ SpPanedLayout newHorizontal
 		position: 30 percent;
 		add: (SpBoxLayout newVertical
-			add: #noteList;
 			add: #noteActionBar expand: false;
+			add: #noteList;
 			yourself);
 		add: #noteContent;
 		yourself
@@ -50,11 +50,16 @@ NmNotebookPresenter class >> unselectedMessage [
 ]
 
 { #category : #actions }
-NmNotebookPresenter >> addNote [
+NmNotebookPresenter >> doAddNote [
 	
 	NmNote new save.
 	self updatePresenter.
 	noteList selectFirst
+]
+
+{ #category : #actions }
+NmNotebookPresenter >> doRemoveSelected [
+	
 ]
 
 { #category : #initialization }
@@ -68,13 +73,19 @@ NmNotebookPresenter >> initialize [
 NmNotebookPresenter >> initializePresenters [
 
 	noteActionBar := self newActionBar
-		add: (self newLabel label: 'Notes');
-		addLast: (self newButton
-			icon: (self application iconNamed: #add);
-			action: [ self addNote ];
+		add: (self newButton
+			icon: (self application buttonIconNamed: 'edit-find');
+			action: [ self doFindNote ];
+			yourself);
+		add: (self newButton
+			icon: (self application buttonIconNamed: 'document-new');
+			action: [ self doAddNote ];
 			yourself);
 		yourself.
-	noteList := self newComponentList.
+	noteList := self newComponentList
+		contextMenu: [ self noteListMenu ];
+		contextKeyBindings: self noteListKeyBindings;
+		yourself.
 		
 	noteContent := self newPresenterSelector
 			when: [ :aNote | aNote notNil ] show: [ :aNote | 
@@ -105,6 +116,44 @@ NmNotebookPresenter >> initializeWindow: aWindowPresenter [
 		title: self class defaultTitle;
 		initialExtent: self class defaultExtent;
 		whenOpenedDo: [ noteList takeKeyboardFocus ]
+]
+
+{ #category : #initialization }
+NmNotebookPresenter >> noteListActions [
+
+	^ CmCommandGroup forSpec
+		beRoot;
+		register: ((CmCommandGroup named: 'Critical') asSpecGroup
+			beDisplayedAsGroup;
+			register: (NmRemoveNoteCommand forSpecContext: self);
+			yourself);
+		"register: ((CmCommandGroup named: 'Pomodoro') asSpecGroup
+			beDisplayedAsGroup;
+			register: (CrTodoTaskStartPomodoroCommand forSpecContext: self);
+			yourself);
+		register: ((CmCommandGroup named: 'Management') asSpecGroup
+			beDisplayedAsGroup;
+			register: (CrTodoViewArchivedCommand forSpecContext: self);
+			yourself);
+		register: ((CmCommandGroup named: 'Critical') asSpecGroup
+			beDisplayedAsGroup;
+			register: (CrTodoArchiveCompletedCommand forSpecContext: self);
+			register: (CrTodoTaskArchiveCommand forSpecContext: self);
+			register: (CrTodoTaskDeleteCommand forSpecContext: self);
+			yourself);"
+		yourself
+]
+
+{ #category : #initialization }
+NmNotebookPresenter >> noteListKeyBindings [
+		
+	^ self noteListActions asKMCategory
+]
+
+{ #category : #initialization }
+NmNotebookPresenter >> noteListMenu [
+		
+	^ self noteListActions asMenuPresenter
 ]
 
 { #category : #'notification handling' }
