@@ -83,3 +83,9 @@ NmModelApplication >> repository [
 
 	^ repository
 ]
+
+{ #category : #'system startup' }
+NmModelApplication >> shutDown [
+
+	repository close
+]
