@@ -191,7 +191,7 @@ NmNotebookPresenter >> notesAsPresenters [
 { #category : #accessing }
 NmNotebookPresenter >> selectedNote [
 
-	^ noteList selectedItem
+	^ noteList selectedItem ifNotNil: #note
 ]
 
 { #category : #initialization }
