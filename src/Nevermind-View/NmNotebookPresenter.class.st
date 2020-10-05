@@ -60,6 +60,14 @@ NmNotebookPresenter >> doAddNote [
 { #category : #actions }
 NmNotebookPresenter >> doRemoveSelected [
 	
+	self selectedNote remove.
+	self updatePresenter
+]
+
+{ #category : #testing }
+NmNotebookPresenter >> hasSelectedNote [
+
+	^ self selectedNote notNil
 ]
 
 { #category : #initialization }
@@ -178,6 +186,12 @@ NmNotebookPresenter >> notesAsPresenters [
 		self 
 			instantiate: NmNoteSummaryPresenter
 			on: each  ]
+]
+
+{ #category : #accessing }
+NmNotebookPresenter >> selectedNote [
+
+	^ noteList selectedItem
 ]
 
 { #category : #initialization }

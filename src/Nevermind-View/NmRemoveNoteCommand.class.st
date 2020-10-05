@@ -28,6 +28,12 @@ NmRemoveNoteCommand class >> defaultShortcut [
 	^ $x platformMeta
 ]
 
+{ #category : #testing }
+NmRemoveNoteCommand >> canBeExecuted [
+
+	^ context hasSelectedNote 
+]
+
 { #category : #executing }
 NmRemoveNoteCommand >> execute [
 	
