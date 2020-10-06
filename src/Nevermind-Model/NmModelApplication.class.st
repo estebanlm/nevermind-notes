@@ -89,3 +89,9 @@ NmModelApplication >> shutDown [
 
 	repository close
 ]
+
+{ #category : #'system startup' }
+NmModelApplication >> startUp [
+
+	self initialize
+]

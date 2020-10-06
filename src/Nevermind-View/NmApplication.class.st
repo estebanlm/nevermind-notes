@@ -4,6 +4,12 @@ Class {
 	#instVars : [
 		'notificationCenter'
 	],
+	#classVars : [
+		'Current'
+	],
+	#classInstVars : [
+		'session'
+	],
 	#category : #'Nevermind-View-Application'
 }
 
@@ -11,6 +17,30 @@ Class {
 NmApplication class >> applicationName [
 
 	^ 'notes'
+]
+
+{ #category : #accessing }
+NmApplication class >> current [
+
+	self validateSession.
+	^ Current ifNil: [ Current := self new ]
+]
+
+{ #category : #initialization }
+NmApplication class >> reset [
+	<script>
+
+	Current ifNil: [ ^ self ].
+	Current emergencyShutdown.
+	Current := nil
+]
+
+{ #category : #private }
+NmApplication class >> validateSession [
+	
+	session == Smalltalk session ifTrue: [ ^ self ].
+	Current := nil.
+	session := Smalltalk session
 ]
 
 { #category : #'accessing icons' }
@@ -57,6 +87,13 @@ NmApplication >> notificationCenter [
 
 	^ notificationCenter ifNil: [ 
 		notificationCenter := NmNotificationCenter new ]
+]
+
+{ #category : #running }
+NmApplication >> run [
+
+	Current := self.
+	super run
 ]
 
 { #category : #running }

@@ -9,6 +9,12 @@ Class {
 	#category : #'Nevermind-View-Notebook'
 }
 
+{ #category : #actions }
+NmNotePresenter >> doExport [
+	
+	self flag: #TODO.
+]
+
 { #category : #initialization }
 NmNotePresenter >> initializePresenters [
 
@@ -38,28 +44,38 @@ NmNotePresenter >> initializeWindow: aWindowPresenter [
 NmNotePresenter >> loadNote [
 
 	GtkRunLoop defer: [ 
-		| buffer |
-		buffer := GtkSourceBuffer new 
-			language: GtkSourceLanguageManager markdown;
-			text: self note contents;
-			yourself.
-		buffer connectChanged: [ self textChanged ].
-		sourceView textBuffer: buffer ]
+		sourceView textBuffer text: self note contents ]
+]
+
+{ #category : #private }
+NmNotePresenter >> margin [
+
+	^ 5
 ]
 
 { #category : #initialization }
 NmNotePresenter >> newSourceView [
-		
+	| scrolledWindow sourceBuffer margin |
+
+	margin := self margin.
 	sourceView := GtkSourceView new
-		"marginStart: 10;
-		marginEnd: 10;"
+		marginStart: margin;
+		marginEnd: margin;
 		tabWidth: 4;
 		beWrapWord;
 		yourself.
 
-	^ GtkScrolledWindow new
-		add: sourceView;
-		showAll
+	sourceBuffer := GtkSourceBuffer new 
+		language: GtkSourceLanguageManager markdown;
+		text: self note contents;
+		yourself.
+	sourceBuffer connectChanged: [ self textChanged ].
+	sourceView textBuffer: sourceBuffer.
+
+	scrolledWindow := GtkScrolledWindow newWidget: sourceView.
+	scrolledWindow addClass: 'note'.
+		
+	^ scrolledWindow showAll
 ]
 
 { #category : #accessing }

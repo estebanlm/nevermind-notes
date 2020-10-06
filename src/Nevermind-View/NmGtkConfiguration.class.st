@@ -12,12 +12,7 @@ NmGtkConfiguration >> commonStyle [
 
 	^ '
 .dim { color: LightSlateGrey }
-.title { font-weight: bold }
-.titleShortcut { color: LightSlateGrey }
-.list { padding: 5px }
-.listNameLabel { color: LightSlateGrey; margin-top: 3px; margin-bottom: 3px }
-.mark { margin-right: 3px }
-.pomodoroSurpassedTime { color: red }
+.note { color: #000000 }
 '
 ]
 

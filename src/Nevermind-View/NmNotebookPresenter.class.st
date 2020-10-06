@@ -60,8 +60,9 @@ NmNotebookPresenter >> doAddNote [
 { #category : #actions }
 NmNotebookPresenter >> doRemoveSelected [
 	
-	self selectedNote remove.
-	self updatePresenter
+	1/0
+	"self selectedNote remove.
+	self updatePresenter"
 ]
 
 { #category : #testing }
