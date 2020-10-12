@@ -65,10 +65,12 @@ NmNoteCommiter >> queue: anObject [
 NmNoteCommiter >> spawnNewProcess [
 
 	^ [  
-			waitSemaphore wait.
-			self waitTime wait.
-			self flushQueue ] 
-		forkNamed: 'Note commiter'
+			[
+				waitSemaphore wait.
+				self waitTime wait.
+				self flushQueue 
+			] repeat 
+		] forkNamed: 'Note commiter'
 ]
 
 { #category : #private }

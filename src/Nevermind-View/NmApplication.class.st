@@ -2,7 +2,8 @@ Class {
 	#name : #NmApplication,
 	#superclass : #SpApplication,
 	#instVars : [
-		'notificationCenter'
+		'notificationCenter',
+		'standalone'
 	],
 	#classVars : [
 		'Current'
@@ -16,7 +17,7 @@ Class {
 { #category : #activation }
 NmApplication class >> applicationName [
 
-	^ 'notes'
+	^ 'Nevermind Notes'
 ]
 
 { #category : #accessing }
@@ -46,7 +47,7 @@ NmApplication class >> validateSession [
 { #category : #'accessing icons' }
 NmApplication >> buttonIconNamed: aString [
 
-	^ GtkImage newIconForButtonNamed: aString
+	^ GtkRunLoop defer: [ GtkImage newIconForButtonNamed: aString ]
 ]
 
 { #category : #accessing }
@@ -66,8 +67,21 @@ NmApplication >> iconNamed: aString [
 NmApplication >> initialize [
 
 	super initialize.
-	self useBackend: #Gtk with: NmGtkConfiguration new.
+	self initializeBackend.
 	self initializeModel
+]
+
+{ #category : #initialization }
+NmApplication >> initializeBackend [
+	| gtk |
+
+	"Ensure the name of the application"
+	self isStandalone ifTrue: [ 
+		gtk := GtkApplication new initGtk3.
+		GLibLibrary uniqueInstance gSetPrgName: self class applicationName.
+		gtk run ].
+	
+	self useBackend: #Gtk with: NmGtkConfiguration new
 ]
 
 { #category : #initialization }
@@ -76,10 +90,16 @@ NmApplication >> initializeModel [
 	NmModelApplication reset
 ]
 
+{ #category : #testing }
+NmApplication >> isStandalone [
+
+	^ standalone ifNil: [ standalone := false ]
+]
+
 { #category : #'accessing icons' }
 NmApplication >> menuIconNamed: aString [
 
-	^ GtkImage newIconForMenuNamed: aString
+	^ GtkRunLoop defer: [ GtkImage newIconForMenuNamed: aString ]
 ]
 
 { #category : #accessing }
@@ -87,6 +107,12 @@ NmApplication >> notificationCenter [
 
 	^ notificationCenter ifNil: [ 
 		notificationCenter := NmNotificationCenter new ]
+]
+
+{ #category : #initialization }
+NmApplication >> prepareAsStandaloneApplication [
+	
+	standalone := true
 ]
 
 { #category : #running }
@@ -98,6 +124,10 @@ NmApplication >> run [
 
 { #category : #running }
 NmApplication >> start [
+	| window |
 
-	(self new: NmNotebookPresenter) openWithSpec
+	window := (self new: NmNotebookPresenter) openWithSpec.
+	standalone ifTrue: [ 
+		window whenClosedDo: [
+			Smalltalk exitSuccess ] ]
 ]

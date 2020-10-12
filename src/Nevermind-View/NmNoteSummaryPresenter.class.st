@@ -37,11 +37,7 @@ NmNoteSummaryPresenter >> note [
 { #category : #initialization }
 NmNoteSummaryPresenter >> noteFirstLine [
 		
-	note contents readStreamDo: [ :stream | | line |
-		[ stream atEnd not and: [ (line := stream nextLine trimmed) isEmpty ] ] whileTrue.
-		line isEmptyOrNil ifFalse: [ ^ line ] ].
-
-	^ 'Empty'
+	^ note firstLine
 ]
 
 { #category : #'accessing model' }

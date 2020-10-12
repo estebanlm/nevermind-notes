@@ -32,7 +32,7 @@ NmNotebookPresenter class >> defaultSpec [
 { #category : #accessing }
 NmNotebookPresenter class >> defaultTitle [
 
-	^ 'Notes'
+	^ NmApplication applicationName
 ]
 
 { #category : #accessing }
@@ -59,10 +59,21 @@ NmNotebookPresenter >> doAddNote [
 
 { #category : #actions }
 NmNotebookPresenter >> doRemoveSelected [
+	| ok selectedNote |
 	
-	1/0
-	"self selectedNote remove.
-	self updatePresenter"
+	selectedNote := self selectedNote.
+	selectedNote ifNil: [ ^ self ].
+
+	ok := (NmConfirmDialog new 
+		title: 'Delete Note';
+		label: ('You are about to delete ""{1}"".' format: { selectedNote firstLine });
+		acceptLabel: 'Delete';
+		openDialogWithSpecParent: self window)
+		isOk.
+	ok ifFalse: [ ^ self ].
+	
+	self selectedNote remove.
+	self updatePresenter
 ]
 
 { #category : #testing }

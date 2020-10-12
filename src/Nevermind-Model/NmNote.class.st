@@ -2,8 +2,8 @@ Class {
 	#name : #NmNote,
 	#superclass : #Object,
 	#instVars : [
-		'lastEditionDate',
-		'contents'
+		'contents',
+		'lastEditionDate'
 	],
 	#category : #'Nevermind-Model'
 }
@@ -33,11 +33,23 @@ NmNote class >> voyageCollectionName [
 ]
 
 { #category : #persistence }
+NmNote class >> voyageContents [
+	<voyageDescription>
+	
+	^ VOToOneDescription new 
+		attributeName: #contents;
+		accessor: (MAPluggableAccessor 
+			read: [ :aNote | aNote contents ]
+			write: [ :aTask :contents | aTask setContents: contents ]);
+		yourself
+]
+
+{ #category : #persistence }
 NmNote class >> voyageLastEditionDate [
 	<voyageDescription>
 	
 	^ VOToOneDescription new 
-		attributeName: 'lastEditionDate';
+		attributeName: #lastEditionDate;
 		accessor: (MAPluggableAccessor 
 			read: [ :aNote | aNote lastEditionDate ifNotNil: #asString ]
 			write: [ :aTask :date | aTask setLastEditionDateFromString: date ]);
@@ -59,9 +71,24 @@ NmNote >> contents [
 { #category : #accessing }
 NmNote >> contents: aString [
 	
-	contents := aString.
+	"Do not do anything if content has not changed"
+	contents = aString ifTrue: [ ^ self ].
+	
+	self setContents: aString.
 	self updateLastEditionDate.
 	NmNoteCommiter uniqueInstance queue: self
+]
+
+{ #category : #accessing }
+NmNote >> firstLine [ 
+
+	self contents readStreamDo: [ :stream | 
+		| line |
+		[ stream atEnd not and: [ (line := stream nextLine trimmed) isEmpty ] ] whileTrue.
+		line isEmptyOrNil 
+			ifFalse: [ ^ line ] ].
+
+	^ 'Empty'
 ]
 
 { #category : #accessing }
@@ -84,6 +111,12 @@ NmNote >> lastEditionDate [
 ]
 
 { #category : #private }
+NmNote >> setContents: aString [
+
+	contents := aString
+]
+
+{ #category : #private }
 NmNote >> setLastEditionDateFromString: aString [ 
 	
 	aString isString ifFalse: [ ^ self ].
@@ -93,5 +126,5 @@ NmNote >> setLastEditionDateFromString: aString [
 { #category : #private }
 NmNote >> updateLastEditionDate [
 	
-	lastEditionDate := ZTimestamp now
+	lastEditionDate := DateAndTime now asZTimestamp
 ]

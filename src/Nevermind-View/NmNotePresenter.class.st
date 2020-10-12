@@ -55,7 +55,7 @@ NmNotePresenter >> margin [
 
 { #category : #initialization }
 NmNotePresenter >> newSourceView [
-	| scrolledWindow sourceBuffer margin |
+	| scrolledWindow margin |
 
 	margin := self margin.
 	sourceView := GtkSourceView new
@@ -65,12 +65,11 @@ NmNotePresenter >> newSourceView [
 		beWrapWord;
 		yourself.
 
-	sourceBuffer := GtkSourceBuffer new 
+	sourceView textBuffer: (GtkSourceBuffer new 
 		language: GtkSourceLanguageManager markdown;
 		text: self note contents;
-		yourself.
-	sourceBuffer connectChanged: [ self textChanged ].
-	sourceView textBuffer: sourceBuffer.
+		connectChanged: [ self textChanged ];
+		yourself).
 
 	scrolledWindow := GtkScrolledWindow newWidget: sourceView.
 	scrolledWindow addClass: 'note'.
@@ -102,6 +101,8 @@ NmNotePresenter >> textChanged [
 	| newText |
 	
 	newText := sourceView text.
+	newText ifEmpty: [ ^ self ].
+
 	[
 		"I put this outside to leave the callback (then it does not interfere with the UI"
 		self note contents: newText.
