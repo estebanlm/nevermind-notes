@@ -1,6 +1,6 @@
 Class {
 	#name : #NmNotebookPresenter,
-	#superclass : #StPresenter,
+	#superclass : #NmPresenter,
 	#instVars : [
 		'noteList',
 		'noteContent',
@@ -49,12 +49,27 @@ NmNotebookPresenter class >> unselectedMessage [
 	^ ''
 ]
 
+{ #category : #initialization }
+NmNotebookPresenter >> addGlobalShortcutsTo: aWindowPresenter [
+
+	aWindowPresenter bindKeysWith: (CmCommandGroup forSpec
+		register: (NmAddNoteCommand forSpecContext: self);
+		yourself)
+]
+
+{ #category : #'api-focus' }
+NmNotebookPresenter >> defaultKeyboardFocus [
+
+	^ noteList
+]
+
 { #category : #actions }
 NmNotebookPresenter >> doAddNote [
 	
 	NmNote new save.
 	self updatePresenter.
-	noteList selectFirst
+	noteList selectFirst.
+	noteContent takeKeyboardFocus
 ]
 
 { #category : #actions }
@@ -66,7 +81,7 @@ NmNotebookPresenter >> doRemoveSelected [
 
 	ok := (NmConfirmDialog new 
 		title: 'Delete Note';
-		label: ('You are about to delete ""{1}"".' format: { selectedNote firstLine });
+		label: ('You are about to delete "{1}".' format: { selectedNote firstLine });
 		acceptLabel: 'Delete';
 		openDialogWithSpecParent: self window)
 		isOk.
@@ -97,10 +112,7 @@ NmNotebookPresenter >> initializePresenters [
 			icon: (self application buttonIconNamed: 'edit-find');
 			action: [ self doFindNote ];
 			yourself);
-		add: (self newButton
-			icon: (self application buttonIconNamed: 'document-new');
-			action: [ self doAddNote ];
-			yourself);
+		add: (NmAddNoteCommand forSpecContext: self) asActionButtonPresenter;
 		yourself.
 	noteList := self newComponentList
 		contextMenu: [ self noteListMenu ];
@@ -108,13 +120,13 @@ NmNotebookPresenter >> initializePresenters [
 		yourself.
 		
 	noteContent := self newPresenterSelector
-			when: [ :aNote | aNote notNil ] show: [ :aNote | 
-				self instantiate: NmNotePresenter on: aNote ];
-			when: [ :aNote | aNote isNil ] show: [ 
-				noteList items
-					ifNotEmpty: [ self class unselectedMessage asPresenter ]
-					ifEmpty: [ self class emptyMessage asPresenter ] ];
-			yourself.
+		when: [ :aNote | aNote notNil ] show: [ :aNote | 
+			self instantiate: NmNotePresenter on: aNote ];
+		when: [ :aNote | aNote isNil ] show: [ 
+			noteList items
+				ifNotEmpty: [ self class unselectedMessage asPresenter ]
+				ifEmpty: [ self class emptyMessage asPresenter ] ];
+		yourself.
 	
 	noteList 
 		transmitTo: noteContent 

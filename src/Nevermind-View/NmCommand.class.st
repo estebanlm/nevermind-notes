@@ -16,6 +16,22 @@ NmCommand class >> defaultShortcut [
 	^ nil
 ]
 
+{ #category : #'instance creation' }
+NmCommand class >> newActionButtonFor: aPresenter [
+	
+	^ (self forSpecContext: aPresenter) asButtonPresenter
+		owner: aPresenter;
+		yourself
+]
+
+{ #category : #'instance creation' }
+NmCommand class >> newButtonFor: aPresenter [
+	
+	^ (self forSpecContext: aPresenter) asButtonPresenter
+		owner: aPresenter;
+		yourself
+]
+
 { #category : #accessing }
 NmCommand >> application [
 

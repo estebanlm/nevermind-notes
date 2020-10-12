@@ -4,10 +4,17 @@ Class {
 	#instVars : [
 		'sourceView',
 		'note',
-		'actionBar'
+		'actionBar',
+		'sourcePresenter'
 	],
 	#category : #'Nevermind-View-Notebook'
 }
+
+{ #category : #'api-focus' }
+NmNotePresenter >> defaultKeyboardFocus [
+
+	^ sourcePresenter
+]
 
 { #category : #actions }
 NmNotePresenter >> doExport [
@@ -20,7 +27,7 @@ NmNotePresenter >> initializePresenters [
 
 	self layout: (SpBoxLayout newVertical
 		add: (actionBar := self newActionBar) expand: false;
-		add: (self newGtkWidget
+		add: ((sourcePresenter := self newGtkWidget)
 			widget: self newSourceView;
 			yourself);
 		yourself).

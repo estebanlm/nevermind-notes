@@ -44,9 +44,9 @@ NmBaseInteractionPresenter >> initializeDialogWindow: aDialogWindowPresenter [
 { #category : #initialization }
 NmBaseInteractionPresenter >> initializeWindow: aWindowPresenter [
 
+	super initializeWindow: aWindowPresenter.
 	aWindowPresenter title: self title.
-	self traversePresentersDo: [ :each |
-		each addGlobalShortcutsTo: aWindowPresenter ]
+
 ]
 
 { #category : #api }
