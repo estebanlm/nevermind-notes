@@ -191,9 +191,18 @@ NmNotebookPresenter >> noteListMenu [
 { #category : #'notification handling' }
 NmNotebookPresenter >> noteNoteChanged: aNotification [
 
+	"Veerify I need a resort"
+	"noteList selection selectedIndex = 1 
+		ifFalse: [ 
+			self updatePresenter.
+			self selectNote: aNotification note.
+			^ self ].	"
+
 	noteList presenters 
 		detect: [ :each | each note = aNotification note ]
-		ifFound: [ :aPresenter | aPresenter updatePresenter ]
+		ifFound: [ :aPresenter | aPresenter updatePresenter ].
+		
+
 
 ]
 
@@ -210,6 +219,15 @@ NmNotebookPresenter >> notesAsPresenters [
 		self 
 			instantiate: NmNoteSummaryPresenter
 			on: each  ]
+]
+
+{ #category : #accessing }
+NmNotebookPresenter >> selectNote: aNote [
+
+	noteList presenters 
+		detect: [ :each | each note = aNote ]
+		ifFound: [ :aPresenter | 
+			noteList selectItem: aPresenter ]
 ]
 
 { #category : #accessing }
