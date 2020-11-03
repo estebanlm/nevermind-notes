@@ -52,9 +52,9 @@ NmNotebookPresenter class >> unselectedMessage [
 { #category : #initialization }
 NmNotebookPresenter >> addGlobalShortcutsTo: aWindowPresenter [
 
-	aWindowPresenter bindKeysWith: (CmCommandGroup forSpec
-		register: (NmAddNoteCommand forSpecContext: self);
-		yourself)
+	aWindowPresenter 
+		bindKeyCombination: NmAddNoteCommand defaultShortcut 
+		toAction: [ (NmAddNoteCommand forContext: self) execute  ]
 ]
 
 { #category : #'api-focus' }
