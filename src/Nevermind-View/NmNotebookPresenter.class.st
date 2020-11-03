@@ -5,7 +5,8 @@ Class {
 		'noteList',
 		'noteContent',
 		'noteListHeader',
-		'noteActionBar'
+		'noteActionBar',
+		'updatingListFromNotification'
 	],
 	#category : #'Nevermind-View-Notebook'
 }
@@ -100,6 +101,7 @@ NmNotebookPresenter >> hasSelectedNote [
 { #category : #initialization }
 NmNotebookPresenter >> initialize [
 
+	updatingListFromNotification := false.
 	super initialize.
 	self initializeSubscribers
 ]
@@ -129,7 +131,7 @@ NmNotebookPresenter >> initializePresenters [
 		yourself.
 	
 	noteList 
-		transmitTo: noteContent 
+		transmitDo: [ :aNote | self updateNote: aNote ] 
 		transform: [ :aPresenter | aPresenter ifNotNil: #note ]
 ]
 
@@ -192,11 +194,10 @@ NmNotebookPresenter >> noteListMenu [
 NmNotebookPresenter >> noteNoteChanged: aNotification [
 
 	"Veerify I need a resort"
-	"noteList selection selectedIndex = 1 
+	noteList selection selectedIndex = 1 
 		ifFalse: [ 
-			self updatePresenter.
-			self selectNote: aNotification note.
-			^ self ].	"
+			self updateNoteListFromNoteChanged: aNotification note.
+			^ self ].	
 
 	noteList presenters 
 		detect: [ :each | each note = aNotification note ]
@@ -234,6 +235,24 @@ NmNotebookPresenter >> selectNote: aNote [
 NmNotebookPresenter >> selectedNote [
 
 	^ noteList selectedItem ifNotNil: #note
+]
+
+{ #category : #private }
+NmNotebookPresenter >> updateNote: aNote [ 
+
+	updatingListFromNotification ifTrue: [ ^ self ].
+	noteContent setModel: aNote
+]
+
+{ #category : #'notification handling' }
+NmNotebookPresenter >> updateNoteListFromNoteChanged: aNote [
+
+	updatingListFromNotification := true.
+	[ 
+		self updatePresenter.
+		self selectNote: aNote ]
+	ensure: [
+		updatingListFromNotification := false ].
 ]
 
 { #category : #initialization }
