@@ -57,17 +57,18 @@ NmNotePresenter >> loadNote [
 { #category : #private }
 NmNotePresenter >> margin [
 
-	^ 5
+	^ 15
 ]
 
 { #category : #initialization }
 NmNotePresenter >> newSourceView [
-	| scrolledWindow margin |
+	| scrolledWindow |
 
-	margin := self margin.
 	sourceView := GtkSourceView new
-		marginStart: margin;
-		marginEnd: margin;
+		topMargin: self margin;
+		leftMargin: self margin;
+		bottomMargin: self margin;
+		rightMargin: self margin;
 		tabWidth: 4;
 		beWrapWord;
 		yourself.
