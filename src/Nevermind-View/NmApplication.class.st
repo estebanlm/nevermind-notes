@@ -112,6 +112,7 @@ NmApplication >> notificationCenter [
 { #category : #initialization }
 NmApplication >> prepareAsStandaloneApplication [
 	
+	MorphicUIManager uiProcess ifNotNil: #terminate.
 	standalone := true
 ]
 
