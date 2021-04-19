@@ -21,13 +21,13 @@ NmNotebookPresenter class >> defaultExtent [
 NmNotebookPresenter class >> defaultSpec [
 
 	^ SpPanedLayout newHorizontal
-		position: 30 percent;
-		add: (SpBoxLayout newVertical
-			add: #noteActionBar expand: false;
-			add: #noteList;
-			yourself);
-		add: #noteContent;
-		yourself
+		  positionOfSlider: 30 percent;
+		  add: (SpBoxLayout newVertical
+				   add: #noteActionBar expand: false;
+				   add: #noteList;
+				   yourself);
+		  add: #noteContent;
+		  yourself
 ]
 
 { #category : #accessing }
@@ -48,6 +48,13 @@ NmNotebookPresenter class >> unselectedMessage [
 
 	"^ 'Select a note to edit it.'"
 	^ ''
+]
+
+{ #category : #private }
+NmNotebookPresenter >> activateNote: aNotePresenter [
+	
+	aNotePresenter ifNil: [ ^ self ].
+	noteContent takeKeyboardFocus
 ]
 
 { #category : #initialization }
@@ -71,6 +78,16 @@ NmNotebookPresenter >> doAddNote [
 	self updatePresenter.
 	noteList selectFirst.
 	noteContent takeKeyboardFocus
+]
+
+{ #category : #actions }
+NmNotebookPresenter >> doOpenPlayground [
+	| app |
+	
+	app := self application 
+		propertyAt: #pharo
+		ifAbsentPut: [ StPharoApplication new useGtk ].
+	(StPlayground newApplication: app) openWithSpec
 ]
 
 { #category : #actions }
@@ -110,15 +127,18 @@ NmNotebookPresenter >> initialize [
 NmNotebookPresenter >> initializePresenters [
 
 	noteActionBar := self newActionBar
-		add: (self newButton
+		"add: (self newButton
 			icon: (self application buttonIconNamed: 'edit-find');
 			action: [ self doFindNote ];
-			yourself);
+			yourself);"
 		add: (NmAddNoteCommand forSpecContext: self) asActionButtonPresenter;
+		add: (NmOpenPlaygroundCommand forSpecContext: self) asActionButtonPresenter;
 		yourself.
 	noteList := self newComponentList
 		contextMenu: [ self noteListMenu ];
 		contextKeyBindings: self noteListKeyBindings;
+		activateOnDoubleClick;
+		whenActivatedDo: [ :selection | self activateNote: selection selectedItem ];
 		yourself.
 		
 	noteContent := self newPresenterSelector

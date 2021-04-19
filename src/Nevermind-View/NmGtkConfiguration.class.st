@@ -88,7 +88,7 @@ NmGtkConfiguration >> macThemeName [
 { #category : #accessing }
 NmGtkConfiguration >> model [
 
-	^ CrModelApplication current
+	^ NmModelApplication current
 ]
 
 { #category : #'accessing resources' }

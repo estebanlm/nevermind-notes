@@ -48,6 +48,12 @@ NmNotePresenter >> initializeWindow: aWindowPresenter [
 ]
 
 { #category : #private }
+NmNotePresenter >> languageMarkdown [
+	
+	^ self application languageMarkdown
+]
+
+{ #category : #private }
 NmNotePresenter >> loadNote [
 
 	GtkRunLoop defer: [ 
@@ -74,7 +80,8 @@ NmNotePresenter >> newSourceView [
 		yourself.
 
 	sourceView textBuffer: (GtkSourceBuffer new 
-		language: GtkSourceLanguageManager markdown;
+		language: self languageMarkdown;
+		styleScheme: self styleScheme;
 		text: self note contents;
 		connectChanged: [ self textChanged ];
 		yourself).
@@ -105,6 +112,12 @@ NmNotePresenter >> setModelBeforeInitialization: aNote [
 ]
 
 { #category : #private }
+NmNotePresenter >> styleScheme [
+
+	^ self application styleScheme
+]
+
+{ #category : #private }
 NmNotePresenter >> textChanged [
 	| newText |
 	
@@ -117,11 +130,4 @@ NmNotePresenter >> textChanged [
 		self application notificationCenter notify: (NmNoteChangedNotification newNote: self note)
 	] schedule
 
-]
-
-{ #category : #initialization }
-NmNotePresenter >> updatePresenter [
-
-	self note ifNil: [ ^ self ].
-	self loadNote
 ]

@@ -96,6 +96,25 @@ NmApplication >> isStandalone [
 	^ standalone ifNil: [ standalone := false ]
 ]
 
+{ #category : #'accessing resources' }
+NmApplication >> languageManager [ 
+		
+	^ self 
+		propertyAt: #languageManager
+		ifAbsentPut: [
+			GtkRunLoop defer: [  
+				GtkSourceLanguageManager default
+				"GtkSourceLanguageManager new
+					searchPaths: { (FileLocator imageDirectory /'thiefmd' / 'data' / 'language-specs') fullName };
+					yourself" ] ]
+]
+
+{ #category : #'accessing resources' }
+NmApplication >> languageMarkdown [
+
+	^ self languageManager languageWithId: 'markdown' 
+]
+
 { #category : #'accessing icons' }
 NmApplication >> menuIconNamed: aString [
 
@@ -131,4 +150,24 @@ NmApplication >> start [
 	standalone ifTrue: [ 
 		window whenClosedDo: [
 			Smalltalk exitSuccess ] ]
+]
+
+{ #category : #'accessing resources' }
+NmApplication >> styleScheme [
+	"Notes themes: 'notes-light', 'notes-dark'
+	 Default themes: 'classic' 'cobalt' 'kate' 'oblivion' 'solarized-dark' 'solarized-light' 'tango'"
+
+	^ self styleSchemeManager schemeWithId: 'notes-dark'
+]
+
+{ #category : #'accessing resources' }
+NmApplication >> styleSchemeManager [ 
+
+	^ self 
+		propertyAt: #styleSchemeManager
+		ifAbsentPut: [
+			GtkRunLoop defer: [
+				GtkSourceStyleSchemeManager new
+					searchPaths: { (self configuration resourcesDirectory / 'data' / 'schemes') fullName };
+					yourself ] ]
 ]
