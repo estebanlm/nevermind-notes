@@ -6,7 +6,8 @@ Class {
 		'noteContent',
 		'noteListHeader',
 		'noteActionBar',
-		'updatingListFromNotification'
+		'updatingListFromNotification',
+		'notePanel'
 	],
 	#category : #'Nevermind-View-Notebook'
 }
@@ -15,19 +16,6 @@ Class {
 NmNotebookPresenter class >> defaultExtent [
 
 	^ 900@750
-]
-
-{ #category : #specs }
-NmNotebookPresenter class >> defaultSpec [
-
-	^ SpPanedLayout newHorizontal
-		  positionOfSlider: 30 percent;
-		  add: (SpBoxLayout newVertical
-				   add: #noteActionBar expand: false;
-				   add: #noteList;
-				   yourself);
-		  add: #noteContent;
-		  yourself
 ]
 
 { #category : #accessing }
@@ -126,29 +114,34 @@ NmNotebookPresenter >> initialize [
 { #category : #initialization }
 NmNotebookPresenter >> initializePresenters [
 
-	noteActionBar := self newActionBar
+	self layout: (SpPanedLayout newHorizontal
+		positionOfSlider: 30 percent;
+		add: (notePanel := self newPresenter 
+			layout: (SpBoxLayout newVertical
+				add: (noteActionBar := self newActionBar) expand: false;
+				add: (noteList := self newComponentList);
+				yourself);
+			yourself);
+		add: (noteContent := self newPresenterSelector);
+		yourself).
+
+	noteActionBar	
 		"add: (self newButton
 			icon: (self application buttonIconNamed: 'edit-find');
 			action: [ self doFindNote ];
 			yourself);"
 		add: (NmAddNoteCommand forSpecContext: self) asActionButtonPresenter;
-		add: (NmOpenPlaygroundCommand forSpecContext: self) asActionButtonPresenter;
-		yourself.
-	noteList := self newComponentList
+		add: (NmOpenPlaygroundCommand forSpecContext: self) asActionButtonPresenter.
+		
+	noteList
 		contextMenu: [ self noteListMenu ];
 		contextKeyBindings: self noteListKeyBindings;
 		activateOnDoubleClick;
-		whenActivatedDo: [ :selection | self activateNote: selection selectedItem ];
-		yourself.
+		whenActivatedDo: [ :selection | self activateNote: selection selectedItem ].
 		
-	noteContent := self newPresenterSelector
-		when: [ :aNote | aNote notNil ] show: [ :aNote | 
-			self instantiate: NmNotePresenter on: aNote ];
-		when: [ :aNote | aNote isNil ] show: [ 
-			noteList items
-				ifNotEmpty: [ self class unselectedMessage asPresenter ]
-				ifEmpty: [ self class emptyMessage asPresenter ] ];
-		yourself.
+	noteContent
+		when: [ :aNote | aNote notNil ] show: [ :aNote | self newNotePresenter: aNote ];
+		when: [ :aNote | aNote isNil ] show: [ self newEmptyMesssage ].
 	
 	noteList 
 		transmitDo: [ :aNote | self updateNote: aNote ] 
@@ -170,6 +163,26 @@ NmNotebookPresenter >> initializeWindow: aWindowPresenter [
 		title: self class defaultTitle;
 		initialExtent: self class defaultExtent;
 		whenOpenedDo: [ noteList takeKeyboardFocus ]
+]
+
+{ #category : #initialization }
+NmNotebookPresenter >> newEmptyMesssage [
+
+	^ noteList items
+		ifNotEmpty: [ self class unselectedMessage asPresenter ]
+		ifEmpty: [ self class emptyMessage asPresenter ]
+]
+
+{ #category : #initialization }
+NmNotebookPresenter >> newNotePresenter: aNote [
+
+	^ (self instantiate: NmNotePresenter on: aNote)
+		whenToggleNotePanelDo: [ 
+			notePanel isVisible 
+				ifTrue: [ notePanel hide ]
+				ifFalse: [ notePanel show ].
+			notePanel isVisible ];
+		yourself
 ]
 
 { #category : #initialization }

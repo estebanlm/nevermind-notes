@@ -121,6 +121,16 @@ NmApplication >> menuIconNamed: aString [
 	^ GtkRunLoop defer: [ GtkImage newIconForMenuNamed: aString ]
 ]
 
+{ #category : #'accessing resources' }
+NmApplication >> noteMargin [
+
+	^ Margin 
+		top: 20
+		left: 40 
+		bottom: 100 
+		right: 40
+]
+
 { #category : #accessing }
 NmApplication >> notificationCenter [
 
@@ -170,4 +180,10 @@ NmApplication >> styleSchemeManager [
 				GtkSourceStyleSchemeManager new
 					searchPaths: { (self configuration resourcesDirectory / 'data' / 'schemes') fullName };
 					yourself ] ]
+]
+
+{ #category : #'accessing resources' }
+NmApplication >> textWidth [
+	
+	^ 650
 ]

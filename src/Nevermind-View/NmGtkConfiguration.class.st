@@ -17,6 +17,12 @@ NmGtkConfiguration >> commonStyle [
 ]
 
 { #category : #configuring }
+NmGtkConfiguration >> configureGeneral: anApplication [
+
+	self addCSSProviderFromReference: self resourcesDirectory / 'data' / 'styles' / 'general.css'
+]
+
+{ #category : #configuring }
 NmGtkConfiguration >> configureOSX: anApplication [
 
 	self ensureAppearance: self macAppearanceName. 

@@ -5,10 +5,38 @@ Class {
 		'sourceView',
 		'note',
 		'actionBar',
-		'sourcePresenter'
+		'sourcePresenter',
+		'notePanelVisible',
+		'toggleNotePanelAction',
+		'toggleNotePanelButton'
 	],
 	#category : #'Nevermind-View-Notebook'
 }
+
+{ #category : #private }
+NmNotePresenter >> calculateMargin: aRect of: aGtkSourceView [
+	| w textWidth margin |
+	
+	w := aRect width.
+	textWidth := self application textWidth.
+	margin := w > (textWidth + (self margin width))
+		ifTrue: [ | border |
+			border := ((w - textWidth) / 2) asInteger. 
+			Margin 
+				top: self margin top 
+				left: border
+				bottom: self margin bottom  
+				right: border ]
+		ifFalse: [ self margin ].
+		
+	aGtkSourceView
+		topMargin: margin top;
+		leftMargin: margin left;
+		bottomMargin: margin bottom;
+		rightMargin: margin right.
+		
+
+]
 
 { #category : #'api-focus' }
 NmNotePresenter >> defaultKeyboardFocus [
@@ -22,6 +50,21 @@ NmNotePresenter >> doExport [
 	self flag: #TODO.
 ]
 
+{ #category : #actions }
+NmNotePresenter >> doToggleNotePanel [
+
+	toggleNotePanelAction ifNil: [ ^ self ].
+	notePanelVisible := toggleNotePanelAction value.
+	toggleNotePanelButton icon: (self application buttonIconNamed: self toggleNotePanelIconName)
+]
+
+{ #category : #initialization }
+NmNotePresenter >> initialize [
+
+	notePanelVisible := true.
+	super initialize
+]
+
 { #category : #initialization }
 NmNotePresenter >> initializePresenters [
 
@@ -33,6 +76,10 @@ NmNotePresenter >> initializePresenters [
 		yourself).
 		
 	actionBar 
+		add: ((toggleNotePanelButton := self newButton) 
+			icon: (self application buttonIconNamed: self toggleNotePanelIconName);
+			action: [ self doToggleNotePanel ];
+			yourself)	;
 		addLast: (self newButton 
 			icon: (self application buttonIconNamed: 'document-export');
 			action: [ self doExport ];
@@ -63,7 +110,7 @@ NmNotePresenter >> loadNote [
 { #category : #private }
 NmNotePresenter >> margin [
 
-	^ 15
+	^ self application noteMargin
 ]
 
 { #category : #initialization }
@@ -71,10 +118,8 @@ NmNotePresenter >> newSourceView [
 	| scrolledWindow |
 
 	sourceView := GtkSourceView new
-		topMargin: self margin;
-		leftMargin: self margin;
-		bottomMargin: self margin;
-		rightMargin: self margin;
+		addClass: 'noteText';
+		connectSizeAllocate: [ :aRect | self calculateMargin: aRect of: sourceView ];
 		tabWidth: 4;
 		beWrapWord;
 		yourself.
@@ -130,4 +175,18 @@ NmNotePresenter >> textChanged [
 		self application notificationCenter notify: (NmNoteChangedNotification newNote: self note)
 	] schedule
 
+]
+
+{ #category : #initialization }
+NmNotePresenter >> toggleNotePanelIconName [
+			
+	^ notePanelVisible 
+		ifTrue: [ 'pane-hide-symbolic-rtl' ]
+		ifFalse: [ 'pane-show-symbolic-rtl' ]
+]
+
+{ #category : #events }
+NmNotePresenter >> whenToggleNotePanelDo: aBlock [
+
+	toggleNotePanelAction := aBlock
 ]
