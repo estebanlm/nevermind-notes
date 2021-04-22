@@ -1,6 +1,6 @@
 Class {
 	#name : #NmBookManagerPresenter,
-	#superclass : #NmPresenter,
+	#superclass : #SgaPresenter,
 	#instVars : [
 		'bookList',
 		'actionBar'

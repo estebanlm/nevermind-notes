@@ -1,6 +1,6 @@
 Class {
 	#name : #NmNotebookPresenter,
-	#superclass : #NmPresenter,
+	#superclass : #SgaPresenter,
 	#instVars : [
 		'noteList',
 		'noteContent',
