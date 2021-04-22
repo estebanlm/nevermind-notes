@@ -18,6 +18,12 @@ NmResourcePaths class >> newActive [
 ]
 
 { #category : #accessing }
+NmResourcePaths >> bookDirectory [
+
+	^ (FileLocator imageDirectory / 'books') ensureCreateDirectory
+]
+
+{ #category : #accessing }
 NmResourcePaths >> databaseName [
 
 	^ 'notes.edb'

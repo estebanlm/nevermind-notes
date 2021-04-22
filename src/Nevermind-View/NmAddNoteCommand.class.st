@@ -1,7 +1,7 @@
 Class {
 	#name : #NmAddNoteCommand,
 	#superclass : #NmCommand,
-	#category : #'Nevermind-View-Notebook'
+	#category : #'Nevermind-View-Commands'
 }
 
 { #category : #default }

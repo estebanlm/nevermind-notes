@@ -3,7 +3,8 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'repository',
-		'paths'
+		'paths',
+		'activeBook'
 	],
 	#classVars : [
 		'Current',
@@ -56,20 +57,40 @@ NmModelApplication class >> reset [
 	Current := nil
 ]
 
+{ #category : #accessing }
+NmModelApplication >> activateRepository [
+	| reference |
+	
+	repository ifNotNil: [ repository close ].
+	reference := self paths bookDirectory / self activeBook databaseName.
+	repository := VoEJDBRepository on: reference
+]
+
+{ #category : #accessing }
+NmModelApplication >> activeBook [
+
+	^ activeBook ifNil: [ activeBook := self defaultBook ]
+]
+
+{ #category : #accessing }
+NmModelApplication >> allBooks [
+
+	^ NmBook readAllFrom: self paths bookDirectory
+]
+
+{ #category : #accessing }
+NmModelApplication >> defaultBook [
+
+	^ self allBooks 
+		detect: [ :each | each isDefault ]
+		ifNone: [ NmBook newDefault ]
+]
+
 { #category : #initialization }
 NmModelApplication >> initialize [
 
 	super initialize.
-	paths := NmResourcePaths newActive.
-	self initializeRepository
-]
-
-{ #category : #initialization }
-NmModelApplication >> initializeRepository [
-	| reference |
-
-	reference := self paths repositoryReference.
-	repository := VoEJDBRepository on: reference
+	paths := NmResourcePaths newActive
 ]
 
 { #category : #accessing }
@@ -81,12 +102,15 @@ NmModelApplication >> paths [
 { #category : #accessing }
 NmModelApplication >> repository [
 
-	^ repository
+	^ repository ifNil: [ 
+		self activateRepository.
+		repository ]
 ]
 
 { #category : #'system startup' }
 NmModelApplication >> shutDown [
 
+	repository ifNil: [ ^ self ].
 	repository close
 ]
 

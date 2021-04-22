@@ -185,5 +185,5 @@ NmApplication >> styleSchemeManager [
 { #category : #'accessing resources' }
 NmApplication >> textWidth [
 	
-	^ 650
+	^ 700
 ]

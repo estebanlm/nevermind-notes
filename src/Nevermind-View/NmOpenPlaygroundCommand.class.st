@@ -1,7 +1,7 @@
 Class {
 	#name : #NmOpenPlaygroundCommand,
 	#superclass : #NmCommand,
-	#category : #'Nevermind-View-Notebook'
+	#category : #'Nevermind-View-Commands'
 }
 
 { #category : #default }

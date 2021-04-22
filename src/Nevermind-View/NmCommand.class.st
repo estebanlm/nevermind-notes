@@ -1,7 +1,7 @@
 Class {
 	#name : #NmCommand,
 	#superclass : #CmCommand,
-	#category : #'Nevermind-View-Application'
+	#category : #'Nevermind-View-Commands'
 }
 
 { #category : #default }

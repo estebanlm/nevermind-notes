@@ -69,6 +69,13 @@ NmNotebookPresenter >> doAddNote [
 ]
 
 { #category : #actions }
+NmNotebookPresenter >> doOpenBook [
+	
+	(NmBookManagerPresenter newApplication: self application)
+		openDialogWithSpecParent: self window
+]
+
+{ #category : #actions }
 NmNotebookPresenter >> doOpenPlayground [
 	| app |
 	
@@ -130,6 +137,7 @@ NmNotebookPresenter >> initializePresenters [
 			icon: (self application buttonIconNamed: 'edit-find');
 			action: [ self doFindNote ];
 			yourself);"
+		add: (NmOpenBookCommand forSpecContext: self) asActionButtonPresenter;
 		add: (NmAddNoteCommand forSpecContext: self) asActionButtonPresenter;
 		add: (NmOpenPlaygroundCommand forSpecContext: self) asActionButtonPresenter.
 		
