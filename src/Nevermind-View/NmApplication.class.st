@@ -147,7 +147,6 @@ NmApplication >> notificationCenter [
 { #category : #initialization }
 NmApplication >> prepareAsStandaloneApplication [
 	
-	MorphicUIManager uiProcess ifNotNil: #terminate.
 	standalone := true
 ]
 
@@ -163,9 +162,14 @@ NmApplication >> start [
 	| window |
 
 	window := (self new: NmNotebookPresenter) openWithSpec.
-	standalone ifTrue: [ 
-		window whenClosedDo: [
-			Smalltalk exitSuccess ] ]
+	standalone ifFalse: [ ^ self ].
+	"Ensure exit when close"
+	window whenClosedDo: [ Smalltalk exitSuccess ].
+	"Kill unnecessary process that may be still there"
+	MorphicUIManager uiProcess ifNotNil: #terminate.
+	ProcessBrowser new processList
+		detect: [ :each | each name = 'SDL2 Event loop' ]
+		ifFound: [ :aProcess | aProcess terminate ]	
 ]
 
 { #category : #'accessing resources' }
