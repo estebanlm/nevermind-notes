@@ -53,6 +53,12 @@ NmNotebookPresenter >> addGlobalShortcutsTo: aWindowPresenter [
 		toAction: [ (NmAddNoteCommand forContext: self) execute  ]
 ]
 
+{ #category : #accessing }
+NmNotebookPresenter >> applicationModel [
+
+	^ self application  model
+]
+
 { #category : #'api-focus' }
 NmNotebookPresenter >> defaultKeyboardFocus [
 
@@ -62,7 +68,7 @@ NmNotebookPresenter >> defaultKeyboardFocus [
 { #category : #actions }
 NmNotebookPresenter >> doAddNote [
 	
-	NmNote new save.
+	self applicationModel activeBook addNote: NmNote new.
 	self updatePresenter.
 	noteList selectFirst.
 	noteContent takeKeyboardFocus
@@ -160,7 +166,8 @@ NmNotebookPresenter >> initializePresenters [
 NmNotebookPresenter >> initializeSubscribers [
 
 	self application notificationCenter 
-		subscribe: self to: NmNoteChangedNotification
+		subscribe: self to: NmNoteChangedNotification;
+		subscribe: self to: NmThemeChanged
 ]
 
 { #category : #initialization }
@@ -248,10 +255,16 @@ NmNotebookPresenter >> noteNoteChanged: aNotification [
 
 ]
 
+{ #category : #'notification handling' }
+NmNotebookPresenter >> noteThemeChanged: aNotification [
+
+	noteContent showingPresenter themeChanged
+]
+
 { #category : #accessing }
 NmNotebookPresenter >> notes [
 	
-	^ NmNote findAllSortByEditionDate
+	^ self applicationModel activeBook notesSortedByEditionDate
 ]
 
 { #category : #private }

@@ -177,6 +177,13 @@ NmNotePresenter >> textChanged [
 
 ]
 
+{ #category : #accessing }
+NmNotePresenter >> themeChanged [
+
+	GtkRunLoop defer: [ 
+		sourceView textBuffer styleScheme: self styleScheme ]
+]
+
 { #category : #initialization }
 NmNotePresenter >> toggleNotePanelIconName [
 			

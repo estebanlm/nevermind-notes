@@ -121,6 +121,12 @@ NmApplication >> menuIconNamed: aString [
 	^ GtkRunLoop defer: [ GtkImage newIconForMenuNamed: aString ]
 ]
 
+{ #category : #accessing }
+NmApplication >> model [
+
+	^ NmModelApplication current
+]
+
 { #category : #'accessing resources' }
 NmApplication >> noteMargin [
 
@@ -167,7 +173,9 @@ NmApplication >> styleScheme [
 	"Notes themes: 'notes-light', 'notes-dark'
 	 Default themes: 'classic' 'cobalt' 'kate' 'oblivion' 'solarized-dark' 'solarized-light' 'tango'"
 
-	^ self styleSchemeManager schemeWithId: 'notes-dark'
+	^ self styleSchemeManager schemeWithId: (self configuration isDarkTheme 
+		ifTrue: [ 'notes-dark' ]
+		ifFalse: [ 'notes-light' ])
 ]
 
 { #category : #'accessing resources' }

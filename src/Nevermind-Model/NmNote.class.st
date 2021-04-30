@@ -2,6 +2,7 @@ Class {
 	#name : #NmNote,
 	#superclass : #Object,
 	#instVars : [
+		'bookId',
 		'contents',
 		'lastEditionDate'
 	],
@@ -24,6 +25,18 @@ NmNote class >> findAllSortByEditionDate [
 NmNote class >> isVoyageRoot [
 
 	^ true
+]
+
+{ #category : #persistence }
+NmNote class >> voyageBookId [
+	<voyageDescription>
+	
+	^ VOToOneDescription new 
+		attributeName: #bookId;
+		accessor: (MAPluggableAccessor 
+			read: [ :aNote | aNote bookId ]
+			write: [ :aTask :id | aTask bookId: id ]);
+		yourself
 ]
 
 { #category : #persistence }
@@ -60,6 +73,18 @@ NmNote class >> voyageLastEditionDate [
 NmNote class >> voyageRepository [
 
 	^ NmModelApplication current repository
+]
+
+{ #category : #accessing }
+NmNote >> bookId [
+
+	^ bookId 
+]
+
+{ #category : #accessing }
+NmNote >> bookId: anId [
+
+	bookId := anId
 ]
 
 { #category : #accessing }

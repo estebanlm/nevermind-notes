@@ -2,7 +2,9 @@ Class {
 	#name : #NmGtkConfiguration,
 	#superclass : #SpGtkConfiguration,
 	#instVars : [
-		'iconProvider'
+		'iconProvider',
+		'darkTheme',
+		'settings'
 	],
 	#category : #'Nevermind-View-Application'
 }
@@ -19,7 +21,12 @@ NmGtkConfiguration >> commonStyle [
 { #category : #configuring }
 NmGtkConfiguration >> configureGeneral: anApplication [
 
-	self addCSSProviderFromReference: self resourcesDirectory / 'data' / 'styles' / 'general.css'
+	self addCSSProviderFromReference: self resourcesDirectory / 'data' / 'styles' / 'general.css'.
+	GtkRunLoop defer: [ 
+		settings := GtkSettings default.
+		settings connectThemeChanged: [ :set :spec :app |
+			darkTheme := nil.
+			anApplication notificationCenter notify: NmThemeChanged new ] ]
 ]
 
 { #category : #configuring }
@@ -48,6 +55,21 @@ NmGtkConfiguration >> configureWindows: anApplication [
 	self addCSSProviderFromString: self windowsStyle
 ]
 
+{ #category : #private }
+NmGtkConfiguration >> detectDarkTheme [
+	| backgroundColor |
+
+	"Taking the background color of a GtkTextView is a hack to determine if we are in presence of a 
+	 dark or light theme"
+	backgroundColor := GtkRunLoop defer: [ 
+		| widget |
+		widget := GtkTextView new. 
+		widget markForAutoRelease. 
+		widget styleContext getBackgroundColor ].
+	
+	^ backgroundColor luminance < 0.5
+]
+
 { #category : #configuring }
 NmGtkConfiguration >> ensureAppearance: aName [
 
@@ -68,6 +90,12 @@ NmGtkConfiguration >> iconProvider [
 NmGtkConfiguration >> iconsDirectory [
 
 	^ self model paths iconsDirectory
+]
+
+{ #category : #testing }
+NmGtkConfiguration >> isDarkTheme [
+
+	^ darkTheme ifNil: [ darkTheme := self detectDarkTheme ]
 ]
 
 { #category : #accessing }

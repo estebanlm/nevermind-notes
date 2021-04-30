@@ -58,11 +58,17 @@ NmModelApplication class >> reset [
 ]
 
 { #category : #accessing }
+NmModelApplication >> activateBook: aBook [
+
+	activeBook := aBook
+]
+
+{ #category : #accessing }
 NmModelApplication >> activateRepository [
 	| reference |
 	
 	repository ifNotNil: [ repository close ].
-	reference := self paths bookDirectory / self activeBook databaseName.
+	reference := self paths repositoryReference.
 	repository := VoEJDBRepository on: reference
 ]
 
@@ -74,16 +80,25 @@ NmModelApplication >> activeBook [
 
 { #category : #accessing }
 NmModelApplication >> allBooks [
+	| books |
 
-	^ NmBook readAllFrom: self paths bookDirectory
+	books := self repository selectAll: NmBook.
+	books ifEmpty: [ 
+		self ensureDefaultBook.
+		^ self allBooks ].
+	^ books
 ]
 
 { #category : #accessing }
 NmModelApplication >> defaultBook [
 
-	^ self allBooks 
-		detect: [ :each | each isDefault ]
-		ifNone: [ NmBook newDefault ]
+	^ self allBooks detect: [ :each | each isDefault ]
+]
+
+{ #category : #private }
+NmModelApplication >> ensureDefaultBook [
+
+	NmBook newDefault save
 ]
 
 { #category : #initialization }

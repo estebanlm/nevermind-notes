@@ -2,33 +2,33 @@ Class {
 	#name : #NmBook,
 	#superclass : #Object,
 	#instVars : [
-		'databaseName'
+		'name'
 	],
 	#category : #'Nevermind-Model'
 }
 
 { #category : #accessing }
-NmBook class >> defaultFileName [
+NmBook class >> defaultBookName [
 
-	^ '_notes'
+	^ '__Default__'
 ]
 
 { #category : #accessing }
-NmBook class >> defaultName [
+NmBook class >> findAll [
 
-	^ 'Notes'
+	^ self selectAll
 ]
 
-{ #category : #accessing }
-NmBook class >> extension [
+{ #category : #testing }
+NmBook class >> isVoyageRoot [
 
-	^ '.edb'
+	^ true
 ]
 
 { #category : #'instance creation' }
 NmBook class >> newDefault [
 
-	^ self newName: self defaultFileName
+	^ self newName: self defaultBookName
 ]
 
 { #category : #'instance creation' }
@@ -39,45 +39,68 @@ NmBook class >> newName: aString [
 		yourself
 ]
 
-{ #category : #'instance creation' }
-NmBook class >> readAllFrom: aDirectory [
+{ #category : #persistence }
+NmBook class >> voyageCollectionName [
+	
+	^ 'books'
+]
 
-	^ (aDirectory childrenMatching: ('*', self extension)) 
-		collect: [ :each | 
-			self new 
-				databaseName: each base;
-				yourself ]
+{ #category : #persistence }
+NmBook class >> voyageRepository [
+
+	^ NmModelApplication current repository
 ]
 
 { #category : #accessing }
-NmBook >> databaseName [
+NmBook >> addNote: aNote [
 
-	^ databaseName
-]
-
-{ #category : #accessing }
-NmBook >> databaseName: aString [
-
-	databaseName := aString
+	aNote bookId: self voyageId.
+	aNote save
 ]
 
 { #category : #testing }
 NmBook >> isDefault [
 
-	^ self databaseName = (self class defaultFileName, self class extension)
+	^ self name = self class defaultBookName
 ]
 
 { #category : #accessing }
 NmBook >> name [
 
-	^ self isDefault 
-		ifTrue: [ self class defaultName ]
-		ifFalse: [ self databaseName allButLast: self class extension size	]
-	
+	^ name
 ]
 
 { #category : #accessing }
 NmBook >> name: aString [
 
-	databaseName := aString, self class extension
+	name := aString
+]
+
+{ #category : #accessing }
+NmBook >> notes [
+	| id |
+
+	id := self voyageId.
+	^ self class voyageRepository 
+		selectMany: NmNote 
+		where: [ :each | each bookId = id ]
+]
+
+{ #category : #accessing }
+NmBook >> notesSortedByEditionDate [
+
+	^ self notes sorted: #lastEditionDate descending
+]
+
+{ #category : #printing }
+NmBook >> printOn: stream [ 
+
+	super printOn: stream.
+	stream << '(' << self name << ')'
+]
+
+{ #category : #accessing }
+NmBook >> removeNote: aNote [
+
+	aNote remove
 ]
