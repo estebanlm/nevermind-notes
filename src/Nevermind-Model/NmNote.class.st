@@ -88,6 +88,17 @@ NmNote >> bookId: anId [
 ]
 
 { #category : #accessing }
+NmNote >> cleanFirstLine: aString [
+	| cleanLine |
+
+	cleanLine := aString.
+	[ cleanLine first isAlphaNumeric ] 
+	whileFalse: [ cleanLine := cleanLine allButFirst ].
+	
+	^ cleanLine
+]
+
+{ #category : #accessing }
 NmNote >> contents [
 
 	^ contents ifNil: [ '' ]
@@ -111,7 +122,7 @@ NmNote >> firstLine [
 		| line |
 		[ stream atEnd not and: [ (line := stream nextLine trimmed) isEmpty ] ] whileTrue.
 		line isEmptyOrNil 
-			ifFalse: [ ^ line ] ].
+			ifFalse: [ ^ self cleanFirstLine: line ] ].
 
 	^ 'Empty'
 ]
