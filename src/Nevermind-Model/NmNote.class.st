@@ -10,6 +10,12 @@ Class {
 }
 
 { #category : #accessing }
+NmNote class >> emptyTitle [
+
+	^ '(Untitled)'
+]
+
+{ #category : #accessing }
 NmNote class >> findAll [
 
 	^ self selectAll
@@ -87,13 +93,13 @@ NmNote >> bookId: anId [
 	bookId := anId
 ]
 
-{ #category : #accessing }
+{ #category : #private }
 NmNote >> cleanFirstLine: aString [
 	| cleanLine |
 
 	cleanLine := aString.
-	[ cleanLine first isAlphaNumeric ] 
-	whileFalse: [ cleanLine := cleanLine allButFirst ].
+	[ cleanLine isNotEmpty and: [ cleanLine first isAlphaNumeric not ] ] 
+	whileTrue: [ cleanLine := cleanLine allButFirst ].
 	
 	^ cleanLine
 ]
@@ -118,13 +124,7 @@ NmNote >> contents: aString [
 { #category : #accessing }
 NmNote >> firstLine [ 
 
-	self contents readStreamDo: [ :stream | 
-		| line |
-		[ stream atEnd not and: [ (line := stream nextLine trimmed) isEmpty ] ] whileTrue.
-		line isEmptyOrNil 
-			ifFalse: [ ^ self cleanFirstLine: line ] ].
-
-	^ 'Empty'
+	^ self rawFirstLine ifEmpty: [ self class emptyTitle ]
 ]
 
 { #category : #accessing }
@@ -144,6 +144,18 @@ NmNote >> initialize [
 NmNote >> lastEditionDate [
 
 	^ lastEditionDate
+]
+
+{ #category : #private }
+NmNote >> rawFirstLine [ 
+
+	self contents readStreamDo: [ :stream | 
+		| line |
+		[ stream atEnd not and: [ (line := stream nextLine trimmed) isEmpty ] ] whileTrue.
+		line isEmptyOrNil 
+			ifFalse: [ ^ self cleanFirstLine: line ] ].
+
+	^ ''
 ]
 
 { #category : #private }
