@@ -1,13 +1,6 @@
 Class {
 	#name : #NmApplication,
-	#superclass : #SpApplication,
-	#instVars : [
-		'notificationCenter',
-		'standalone'
-	],
-	#classVars : [
-		'Current'
-	],
+	#superclass : #SgaApplication,
 	#classInstVars : [
 		'session'
 	],
@@ -63,6 +56,12 @@ NmApplication >> iconNamed: aString [
 	^ self buttonIconNamed: aString
 ]
 
+{ #category : #'accessing icons' }
+NmApplication >> iconProvider [
+
+	self error: 'Use directly #iconNamed:'
+]
+
 { #category : #initialization }
 NmApplication >> initialize [
 
@@ -88,12 +87,6 @@ NmApplication >> initializeBackend [
 NmApplication >> initializeModel [
 	
 	NmModelApplication reset
-]
-
-{ #category : #testing }
-NmApplication >> isStandalone [
-
-	^ standalone ifNil: [ standalone := false ]
 ]
 
 { #category : #'accessing resources' }
@@ -135,19 +128,6 @@ NmApplication >> noteMargin [
 		left: 40 
 		bottom: 100 
 		right: 40
-]
-
-{ #category : #accessing }
-NmApplication >> notificationCenter [
-
-	^ notificationCenter ifNil: [ 
-		notificationCenter := NmNotificationCenter new ]
-]
-
-{ #category : #initialization }
-NmApplication >> prepareAsStandaloneApplication [
-	
-	standalone := true
 ]
 
 { #category : #running }

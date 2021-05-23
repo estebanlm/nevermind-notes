@@ -2,7 +2,6 @@ Class {
 	#name : #NmGtkConfiguration,
 	#superclass : #SpGtkConfiguration,
 	#instVars : [
-		'iconProvider',
 		'darkTheme',
 		'settings'
 	],
@@ -55,35 +54,10 @@ NmGtkConfiguration >> configureWindows: anApplication [
 	self addCSSProviderFromString: self windowsStyle
 ]
 
-{ #category : #private }
-NmGtkConfiguration >> detectDarkTheme [
-	| backgroundColor |
-
-	"Taking the background color of a GtkTextView is a hack to determine if we are in presence of a 
-	 dark or light theme"
-	backgroundColor := GtkRunLoop defer: [ 
-		| widget |
-		widget := GtkTextView new. 
-		widget markForAutoRelease. 
-		widget styleContext getBackgroundColor ].
-	
-	^ backgroundColor luminance < 0.5
-]
-
 { #category : #configuring }
 NmGtkConfiguration >> ensureAppearance: aName [
 
 	"MpSettings ensureAppearance: aName"
-]
-
-{ #category : #accessing }
-NmGtkConfiguration >> iconProvider [
-
-	^ iconProvider ifNil: [ 
-		iconProvider := NmIconProvider new
-			addLocation: self iconsDirectory;
-			addLocation: self themeIconsDirectory;
-			yourself ] 
 ]
 
 { #category : #'accessing resources' }
