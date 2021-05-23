@@ -10,13 +10,13 @@ Class {
 { #category : #accessing }
 NmBaseInteractionPresenter class >> currentApplication [ 
 
-	^ CrApplication current
+	^ NmApplication current
 ]
 
 { #category : #'instance creation' }
 NmBaseInteractionPresenter class >> new [
 
-	^ self newApplication: CrApplication current
+	^ self newApplication: NmApplication current
 ]
 
 { #category : #'instance creation' }
