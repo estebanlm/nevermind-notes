@@ -98,12 +98,11 @@ NmNotebookPresenter >> doRemoveSelected [
 	selectedNote := self selectedNote.
 	selectedNote ifNil: [ ^ self ].
 
-	ok := (NmConfirmDialog new 
+	ok := self application newConfirm 
 		title: 'Delete Note';
 		label: ('You are about to delete "{1}".' format: { selectedNote firstLine });
 		acceptLabel: 'Delete';
-		openDialogWithSpecParent: self window)
-		isOk.
+		openDialogWithSpecParent: self window.
 	ok ifFalse: [ ^ self ].
 	
 	self selectedNote remove.

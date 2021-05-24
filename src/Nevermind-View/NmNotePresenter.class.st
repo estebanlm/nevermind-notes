@@ -8,7 +8,9 @@ Class {
 		'sourcePresenter',
 		'notePanelVisible',
 		'toggleNotePanelAction',
-		'toggleNotePanelButton'
+		'toggleNotePanelButton',
+		'searchText',
+		'searchPanel'
 	],
 	#category : #'Nevermind-View-Notebook'
 }
@@ -70,11 +72,18 @@ NmNotePresenter >> initializePresenters [
 
 	self layout: (SpBoxLayout newVertical
 		add: (actionBar := self newActionBar) expand: false;
-		add: ((sourcePresenter := self newGtkWidget)
-			widget: self newSourceView;
+		add: (SpOverlayLayout new 
+			child: ((sourcePresenter := self newGtkWidget)
+				widget: self newSourceView;
+				yourself);
+			addOverlay: (searchPanel := self instantiate: NmSearchTextPresenter on: sourcePresenter) 
+				withConstraints: [ :c | c vAlignStart; hAlignEnd ];
 			yourself);
 		yourself).
-		
+
+	"For some reason, hide just works fine once widget is built :("
+	self whenBuiltDo: [ searchPanel hide. ].
+
 	actionBar 
 		add: ((toggleNotePanelButton := self newButton) 
 			icon: (self application buttonIconNamed: self toggleNotePanelIconName);
