@@ -7,5 +7,5 @@ Class {
 { #category : #testing }
 NmDeploymentPaths class >> isActive [
 
-	^ CrModelApplication isDevelopment not
+	^ NmModelApplication isDevelopment not
 ]
