@@ -19,6 +19,14 @@ NmSearchTextPresenter >> activate [
 	self model highlightSearchText: true
 ]
 
+{ #category : #initialization }
+NmSearchTextPresenter >> connectPresenters [ 
+
+	searchText whenTextChangedDo: [ :aString | self search: aString ].
+	forwardButton action: [ self searchForward ]
+	
+]
+
 { #category : #activation }
 NmSearchTextPresenter >> dismiss [
 
@@ -56,6 +64,7 @@ NmSearchTextPresenter >> initializePresenter [
 	self layout: (SpBoxLayout newHorizontal
 		borderWidth: 5;
 		add: (searchText := self newSearchInput);
+		add: (forwardButton := self newButton) expand: false;
 		yourself).
 		
 	self dismissOnLostFocus.
@@ -64,14 +73,19 @@ NmSearchTextPresenter >> initializePresenter [
 		bindKeyCombination: $f meta 
 		toAction: [ self toggleActivate ].
 	
-	searchText whenTextChangedDo: [ :aString | self search: aString ]
-
+	forwardButton icon: (self application iconNamed: 'go-down-search').
 ]
 
-{ #category : #initialization }
+{ #category : #'private actions' }
 NmSearchTextPresenter >> search: aString [
 
 	self model searchText: aString
+]
+
+{ #category : #'private actions' }
+NmSearchTextPresenter >> searchForward [
+
+	self model searchForward
 ]
 
 { #category : #activation }
