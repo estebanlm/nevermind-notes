@@ -15,7 +15,8 @@ NmSearchTextPresenter >> activate [
 	self isVisible ifTrue: [ ^ self ].
 	self show.
 	self takeKeyboardFocus.	
-	self flag: #TODO. "Here also restore search"
+	
+	self model highlightSearchText: true
 ]
 
 { #category : #activation }
@@ -23,7 +24,9 @@ NmSearchTextPresenter >> dismiss [
 
 	self isVisible ifFalse: [ ^ self ].
 	self hide.
-	self owner takeKeyboardFocus
+	
+	self model highlightSearchText: false.
+	self model takeKeyboardFocus
 ]
 
 { #category : #private }
@@ -57,8 +60,18 @@ NmSearchTextPresenter >> initializePresenter [
 		
 	self dismissOnLostFocus.
 	self dismissOnKeyCombination: $f meta | (KeyboardKey escape asKeyCombination). 
-	self model bindKeyCombination: $f meta toAction: [ self toggleActivate ].
+	self model 
+		bindKeyCombination: $f meta 
+		toAction: [ self toggleActivate ].
+	
+	searchText whenTextChangedDo: [ :aString | self search: aString ]
 
+]
+
+{ #category : #initialization }
+NmSearchTextPresenter >> search: aString [
+
+	self model searchText: aString
 ]
 
 { #category : #activation }

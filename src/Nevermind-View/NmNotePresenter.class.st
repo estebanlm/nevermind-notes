@@ -60,6 +60,13 @@ NmNotePresenter >> doToggleNotePanel [
 	toggleNotePanelButton icon: (self application buttonIconNamed: self toggleNotePanelIconName)
 ]
 
+{ #category : #'actions search' }
+NmNotePresenter >> highlightSearchText: aBoolean [
+
+	GtkRunLoop defer: [
+		sourceView textBuffer searchContext highlight: aBoolean ]
+]
+
 { #category : #initialization }
 NmNotePresenter >> initialize [
 
@@ -76,7 +83,7 @@ NmNotePresenter >> initializePresenters [
 			child: ((sourcePresenter := self newGtkWidget)
 				widget: self newSourceView;
 				yourself);
-			addOverlay: (searchPanel := self instantiate: NmSearchTextPresenter on: sourcePresenter) 
+			addOverlay: (searchPanel := self instantiate: NmSearchTextPresenter on: self) 
 				withConstraints: [ :c | c vAlignStart; hAlignEnd ];
 			yourself);
 		yourself).
@@ -157,6 +164,13 @@ NmNotePresenter >> note: aNote [
 
 	note := aNote.
 	self loadNote
+]
+
+{ #category : #'actions search' }
+NmNotePresenter >> searchText: aString [
+
+	GtkRunLoop defer: [
+		sourceView textBuffer searchContext searchText: aString ]
 ]
 
 { #category : #'accessing model' }
