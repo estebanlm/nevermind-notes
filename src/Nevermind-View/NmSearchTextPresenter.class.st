@@ -50,7 +50,7 @@ NmSearchTextPresenter >> dismissIfNoPresenterHasFocus [
 { #category : #activation }
 NmSearchTextPresenter >> dismissOnKeyCombination: aKeyCombination [
 
-	self bindKeyCombination: aKeyCombination toAction: [ self dismiss ] 
+	searchText bindKeyCombination: aKeyCombination toAction: [ self dismiss ] 
 ]
 
 { #category : #activation }
@@ -85,14 +85,15 @@ NmSearchTextPresenter >> initializePresenter [
 			mouseInComponent := false. 
 			self dismissIfNoPresenterHasFocus ].
 	self dismissOnLostFocus.
-	self dismissOnKeyCombination: $f meta | (KeyboardKey escape asKeyCombination). 
+	self dismissOnKeyCombination: Character escape asKeyCombination.
 	self model 
 		bindKeyCombination: $f meta 
 		toAction: [ self toggleActivate ].
 	
 	self flag: #TODO. "Move to Spec"
 	self whenBuiltDo: [  
-		forwardButton adapter widget canFocus: false ].
+		{ forwardButton. backwardButton } 
+		do: [ :each | each adapter widget canFocus: false ] ].
 	
 	forwardButton icon: (self application iconNamed: 'go-down-search').
 	backwardButton icon: (self application iconNamed: 'go-up-search')
