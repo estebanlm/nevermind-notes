@@ -4,7 +4,10 @@ Class {
 	#traits : 'SpTModel',
 	#classTraits : 'SpTModel classTrait',
 	#instVars : [
-		'searchText'
+		'searchText',
+		'forwardButton',
+		'backwardButton',
+		'mouseInComponent'
 	],
 	#category : #'Nevermind-View-Utils'
 }
@@ -23,8 +26,8 @@ NmSearchTextPresenter >> activate [
 NmSearchTextPresenter >> connectPresenters [ 
 
 	searchText whenTextChangedDo: [ :aString | self search: aString ].
-	forwardButton action: [ self searchForward ]
-	
+	forwardButton action: [ self searchForward ].
+	backwardButton action: [ self searchBackward ]
 ]
 
 { #category : #activation }
@@ -59,27 +62,52 @@ NmSearchTextPresenter >> dismissOnLostFocus [
 ]
 
 { #category : #initialization }
+NmSearchTextPresenter >> initialize [
+
+	mouseInComponent := true.
+	super initialize
+]
+
+{ #category : #initialization }
 NmSearchTextPresenter >> initializePresenter [
 
 	self layout: (SpBoxLayout newHorizontal
 		borderWidth: 5;
 		add: (searchText := self newSearchInput);
 		add: (forwardButton := self newButton) expand: false;
+		add: (backwardButton := self newButton) expand: false;
 		yourself).
-		
+	
+	self eventHandler 
+		whenMouseEnterDo: [ :event | 
+			mouseInComponent := true ];
+		whenMouseLeaveDo: [ :event |
+			mouseInComponent := false. 
+			self dismissIfNoPresenterHasFocus ].
 	self dismissOnLostFocus.
 	self dismissOnKeyCombination: $f meta | (KeyboardKey escape asKeyCombination). 
 	self model 
 		bindKeyCombination: $f meta 
 		toAction: [ self toggleActivate ].
 	
+	self flag: #TODO. "Move to Spec"
+	self whenBuiltDo: [  
+		forwardButton adapter widget canFocus: false ].
+	
 	forwardButton icon: (self application iconNamed: 'go-down-search').
+	backwardButton icon: (self application iconNamed: 'go-up-search')
 ]
 
 { #category : #'private actions' }
 NmSearchTextPresenter >> search: aString [
 
 	self model searchText: aString
+]
+
+{ #category : #'private actions' }
+NmSearchTextPresenter >> searchBackward [
+
+	self model searchBackward
 ]
 
 { #category : #'private actions' }

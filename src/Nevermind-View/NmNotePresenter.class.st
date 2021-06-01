@@ -167,6 +167,19 @@ NmNotePresenter >> note: aNote [
 ]
 
 { #category : #'actions search' }
+NmNotePresenter >> searchBackward [
+
+	GtkRunLoop defer: [
+		| buffer |
+		buffer := sourceView textBuffer.
+		buffer searchContext 
+			backwardThenDo: [ :start :end :wrappedAround | 
+				buffer
+					selectRangeInsert: start 
+					bound: end ] ]
+]
+
+{ #category : #'actions search' }
 NmNotePresenter >> searchForward [
 
 	GtkRunLoop defer: [
