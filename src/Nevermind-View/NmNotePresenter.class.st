@@ -56,8 +56,7 @@ NmNotePresenter >> doExport [
 NmNotePresenter >> doToggleNotePanel [
 
 	toggleNotePanelAction ifNil: [ ^ self ].
-	notePanelVisible := toggleNotePanelAction value.
-	toggleNotePanelButton icon: (self application buttonIconNamed: self toggleNotePanelIconName)
+	notePanelVisible := toggleNotePanelAction value
 ]
 
 { #category : #'actions search' }
@@ -92,9 +91,11 @@ NmNotePresenter >> initializePresenters [
 	self whenBuiltDo: [ searchPanel hide. ].
 
 	actionBar 
-		add: ((toggleNotePanelButton := self newButton) 
-			icon: (self application buttonIconNamed: self toggleNotePanelIconName);
-			action: [ self doToggleNotePanel ];
+		add: ((toggleNotePanelButton := self newToggleButton) 
+			icon: (self application buttonIconNamed: 'sidebar');
+			state: true;
+			whenActivatedDo: [ self doToggleNotePanel ];
+			whenDeactivatedDo: [ self doToggleNotePanel ];
 			yourself)	;
 		addLast: (self newButton 
 			icon: (self application buttonIconNamed: 'document-export');
@@ -231,14 +232,6 @@ NmNotePresenter >> themeChanged [
 
 	GtkRunLoop defer: [ 
 		sourceView textBuffer styleScheme: self styleScheme ]
-]
-
-{ #category : #initialization }
-NmNotePresenter >> toggleNotePanelIconName [
-			
-	^ notePanelVisible 
-		ifTrue: [ 'pane-hide-symbolic-rtl' ]
-		ifFalse: [ 'pane-show-symbolic-rtl' ]
 ]
 
 { #category : #events }
