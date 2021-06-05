@@ -2,7 +2,8 @@ Class {
 	#name : #NmBook,
 	#superclass : #Object,
 	#instVars : [
-		'name'
+		'name',
+		'default'
 	],
 	#category : #'Nevermind-Model'
 }
@@ -10,7 +11,7 @@ Class {
 { #category : #accessing }
 NmBook class >> defaultBookName [
 
-	^ '__Default__'
+	^ 'Default'
 ]
 
 { #category : #accessing }
@@ -58,10 +59,23 @@ NmBook >> addNote: aNote [
 	aNote save
 ]
 
+{ #category : #accessing }
+NmBook >> beDefault [
+
+	default := true
+]
+
+{ #category : #initialization }
+NmBook >> initialize [
+
+	super initialize.
+	default := false
+]
+
 { #category : #testing }
 NmBook >> isDefault [
 
-	^ self name = self class defaultBookName
+	^ default
 ]
 
 { #category : #accessing }
@@ -93,10 +107,18 @@ NmBook >> notesSortedByEditionDate [
 ]
 
 { #category : #printing }
-NmBook >> printOn: stream [ 
+NmBook >> printOn: stream [
 
 	super printOn: stream.
-	stream << '(' << self name << ')'
+	stream << '(' << (self name ifNil: [ 'Noname' ]) << ')'
+]
+
+{ #category : #accessing }
+NmBook >> priority [
+
+	^ self isDefault 
+		ifTrue: [ 0 ]
+		ifFalse: [ 1 ]
 ]
 
 { #category : #accessing }

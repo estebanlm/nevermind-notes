@@ -146,6 +146,13 @@ NmNote >> lastEditionDate [
 	^ lastEditionDate
 ]
 
+{ #category : #printing }
+NmNote >> printOn: stream [
+
+	super printOn: stream.
+	stream << '(' << self firstLine << ')'
+]
+
 { #category : #private }
 NmNote >> rawFirstLine [ 
 
