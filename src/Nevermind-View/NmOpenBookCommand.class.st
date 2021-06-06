@@ -25,7 +25,7 @@ NmOpenBookCommand class >> defaultName [
 { #category : #default }
 NmOpenBookCommand class >> defaultShortcut [
 
-	^ $n platformMeta
+	^ $o platformMeta
 ]
 
 { #category : #executing }

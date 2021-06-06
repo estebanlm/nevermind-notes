@@ -49,8 +49,10 @@ NmNotebookPresenter >> activateNote: aNotePresenter [
 NmNotebookPresenter >> addGlobalShortcutsTo: aWindowPresenter [
 
 	aWindowPresenter 
+		bindKeyCombination: NmOpenBookCommand defaultShortcut 
+			toAction: [ (NmOpenBookCommand forContext: self) execute ];		
 		bindKeyCombination: NmAddNoteCommand defaultShortcut 
-		toAction: [ (NmAddNoteCommand forContext: self) execute  ]
+			toAction: [ (NmAddNoteCommand forContext: self) execute ]
 ]
 
 { #category : #accessing }
@@ -164,7 +166,8 @@ NmNotebookPresenter >> initializePresenters [
 { #category : #initialization }
 NmNotebookPresenter >> initializeSubscribers [
 
-	self application notificationCenter 
+	self application notificationCenter
+		subscribe: self to: NmBookActivatedNotification; 
 		subscribe: self to: NmNoteChangedNotification;
 		subscribe: self to: NmThemeChanged
 ]
@@ -197,6 +200,12 @@ NmNotebookPresenter >> newNotePresenter: aNote [
 				ifFalse: [ notePanel show ].
 			notePanel isVisible ];
 		yourself
+]
+
+{ #category : #'notification handling' }
+NmNotebookPresenter >> noteBookActivated: aNotification [
+
+	self updatePresenter
 ]
 
 { #category : #initialization }

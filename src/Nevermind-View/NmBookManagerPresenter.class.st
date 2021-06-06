@@ -19,7 +19,35 @@ NmBookManagerPresenter >> applicationModel [
 { #category : #initialization }
 NmBookManagerPresenter >> bookListMenu [
 
-	^ nil
+	^ CmCommandGroup forSpec
+		beDisplayedAsGroup;
+		register: ((CmCommandGroup forSpecNamed: 'Activate')
+			beDisplayedAsGroup;
+			register: (NmActivateBookCommand forSpecContext: self)
+			yourself);
+		register: ((CmCommandGroup forSpecNamed: 'Editing')
+			beDisplayedAsGroup;
+			register: (NmAddBookCommand forSpecContext: self);
+			register: (NmRenameBookCommand forSpecContext: self);
+			yourself);
+		register: ((CmCommandGroup forSpecNamed: 'Danger')
+			register: (NmRemoveBookCommand forSpecContext: self);
+			yourself);
+		"prepareForContextMenu;"
+		asMenuPresenter.
+]
+
+{ #category : #actions }
+NmBookManagerPresenter >> doActivateSelectedBook [
+	| book |
+
+	book := bookList selectedItem.
+	book ifNil: [ ^ self ].
+
+	self applicationModel activateBook: book.
+	self application notificationCenter notify: (NmBookActivatedNotification newBook: book).
+	
+	self withWindowDo: [ :w | w close ]
 ]
 
 { #category : #actions }
@@ -34,10 +62,28 @@ NmBookManagerPresenter >> doAddBook [
 	
 	book := NmBook newName: dialog presenter text trimmed.
 	book save.
+	
+	self updatePresenter.
+	bookList selectItem: book
 ]
 
 { #category : #actions }
 NmBookManagerPresenter >> doRemoveSelectedBook [
+	| dialog book |
+
+	book := bookList selectedItem.
+	book ifNil: [ ^ self ].
+
+	dialog := self application newConfirm
+		title: 'Remove Book';
+		label: (('Remove book {1} and all its notes?
+WARNING: You cannot undo this action!') format: { book name });
+		acceptLabel: 'Remove';
+		openDialogWithSpecParent: self window.
+	dialog isOk ifFalse: [ ^ self ].
+	
+	book remove.
+	self updatePresenter
 ]
 
 { #category : #actions }
@@ -57,25 +103,15 @@ NmBookManagerPresenter >> initializePresenters [
 		contextMenu: [ self bookListMenu ].
 	
 	actionBar 
-		add: (self newButton 
-			icon: (self application buttonIconNamed: 'document-new');
-			help: 'Create a new book.'
-			yourself);
-		add: ((deleteButton := self newButton) 
-			icon: (self application buttonIconNamed: 'delete');
-			help: 'Delete selected book.'
-			yourself);
-		addLast: ((openButton := self newButton) 
-			icon: (self application buttonIconNamed: 'document-open');
-			label: 'Open';
-			help: 'Open selected book.'
-			yourself).
+		add: (NmAddBookCommand forSpecContext: self) asActionButtonPresenter;
+		add: (deleteButton := (NmRemoveBookCommand forSpecContext: self) asActionButtonPresenter);
+		addLast: (openButton := (NmActivateBookCommand forSpecContext: self) asLabelledActionButtonPresenter).
 			
 	deleteButton enabled: false.
 	openButton enabled: false.
 	
 	bookList transmitDo: [ :aBook | self updateButtonsFor: aBook ].
-
+	bookList outputActivationPort transmitDo: [ self doActivateSelectedBook ]
 ]
 
 { #category : #initialization }
@@ -94,5 +130,5 @@ NmBookManagerPresenter >> updateButtonsFor: aBook [
 { #category : #initialization }
 NmBookManagerPresenter >> updatePresenter [
 
-	bookList items: self applicationModel allBooks
+	bookList items: (self applicationModel allBooks sorted: (#priority ascending, #name ascending))
 ]
