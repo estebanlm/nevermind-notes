@@ -7,12 +7,12 @@
   <style name="text"            foreground="#FAFAFA" background="#191919"/>
   <style name="cursor"          foreground="#11BCED"/>
   <style name="current-line"    background="#eff0f1"/>
-  <style name="selection"       foreground="#EAEAEA" background="#11BCED"/>
+  <style name="selection"       foreground="#EAEAEA" background="#0B67D9"/>
   <style name="search-match"    background="#c7f131" foreground="#064658"/>
 
   <!-- Bold -->
-  <style name="def:statement" bold="true" foreground="#064658"/>
-  <style name="def:strong-emphasis" bold="true" foreground="#064658"/>
+  <style name="def:statement" bold="true" foreground="#E34286"/> <!-- 064658 -->
+  <style name="def:strong-emphasis" bold="true" foreground="#E34286"/> <!-- 064658 -->
 
   <!-- Italic -->
   <style name="def:doc-comment-element" italic="true" foreground="#0C8DB1"/>
