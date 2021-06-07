@@ -1,6 +1,6 @@
 Class {
 	#name : #NmBookManagerPresenter,
-	#superclass : #SgaPresenter,
+	#superclass : #NmPresenter,
 	#instVars : [
 		'bookList',
 		'actionBar',
@@ -10,30 +10,22 @@ Class {
 	#category : #'Nevermind-View-Book'
 }
 
-{ #category : #accessing }
-NmBookManagerPresenter >> applicationModel [
-
-	^ self application model
-]
-
 { #category : #initialization }
 NmBookManagerPresenter >> bookListMenu [
 
 	^ CmCommandGroup forSpec
-		beDisplayedAsGroup;
-		register: ((CmCommandGroup forSpecNamed: 'Activate')
-			beDisplayedAsGroup;
-			register: (NmActivateBookCommand forSpecContext: self)
-			yourself);
+		beRoot;
+		register: (NmActivateBookCommand forSpecContext: self);
 		register: ((CmCommandGroup forSpecNamed: 'Editing')
 			beDisplayedAsGroup;
 			register: (NmAddBookCommand forSpecContext: self);
 			register: (NmRenameBookCommand forSpecContext: self);
 			yourself);
-		register: ((CmCommandGroup forSpecNamed: 'Danger')
+		register: ((CmCommandGroup forSpecNamed: 'Critical')
+			beDisplayedAsGroup;
 			register: (NmRemoveBookCommand forSpecContext: self);
 			yourself);
-		"prepareForContextMenu;"
+		prepareForContextMenu;
 		asMenuPresenter.
 ]
 
@@ -44,8 +36,7 @@ NmBookManagerPresenter >> doActivateSelectedBook [
 	book := bookList selectedItem.
 	book ifNil: [ ^ self ].
 
-	self applicationModel activateBook: book.
-	self application notificationCenter notify: (NmBookActivatedNotification newBook: book).
+	self application activateBook: book.
 	
 	self withWindowDo: [ :w | w close ]
 ]

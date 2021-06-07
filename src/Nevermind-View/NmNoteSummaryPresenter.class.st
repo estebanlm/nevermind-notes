@@ -1,6 +1,8 @@
 Class {
 	#name : #NmNoteSummaryPresenter,
 	#superclass : #SpPresenter,
+	#traits : 'NmTApplication',
+	#classTraits : 'NmTApplication classTrait',
 	#instVars : [
 		'note',
 		'firstLineLabel',

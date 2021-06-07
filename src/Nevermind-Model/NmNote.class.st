@@ -33,6 +33,12 @@ NmNote class >> isVoyageRoot [
 	^ true
 ]
 
+{ #category : #accessing }
+NmNote class >> maxLength [
+
+	^ 60
+]
+
 { #category : #persistence }
 NmNote class >> voyageBookId [
 	<voyageDescription>
@@ -82,6 +88,14 @@ NmNote class >> voyageRepository [
 ]
 
 { #category : #accessing }
+NmNote >> book [
+	
+	^ self class voyageRepository 
+		selectOne: NmBook 
+		id: self bookId
+]
+
+{ #category : #accessing }
 NmNote >> bookId [
 
 	^ bookId 
@@ -124,7 +138,9 @@ NmNote >> contents: aString [
 { #category : #accessing }
 NmNote >> firstLine [ 
 
-	^ self rawFirstLine ifEmpty: [ self class emptyTitle ]
+	^ self rawFirstLine 
+		ifNotEmpty: [ :aString | aString truncateWithElipsisTo: self class maxLength ]
+		ifEmpty: [ self class emptyTitle ]
 ]
 
 { #category : #accessing }
@@ -144,6 +160,12 @@ NmNote >> initialize [
 NmNote >> lastEditionDate [
 
 	^ lastEditionDate
+]
+
+{ #category : #accessing }
+NmNote >> moveTo: book [
+
+	self bookId: book voyageId
 ]
 
 { #category : #printing }

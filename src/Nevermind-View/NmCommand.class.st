@@ -1,6 +1,8 @@
 Class {
 	#name : #NmCommand,
 	#superclass : #CmCommand,
+	#traits : 'NmTApplication',
+	#classTraits : 'NmTApplication classTrait',
 	#category : #'Nevermind-View-Commands'
 }
 
@@ -51,10 +53,4 @@ NmCommand >> asSpecCommand [
 		ifNotNil: [ :keyCombination | command shortcutKey: keyCombination ].
 		
 	^ command
-]
-
-{ #category : #accessing }
-NmCommand >> notificationCenter [
-
-	^ self application notificationCenter
 ]

@@ -60,7 +60,7 @@ NmModelApplication class >> reset [
 { #category : #accessing }
 NmModelApplication >> activateBook: aBook [
 
-	activeBook := aBook
+	activeBook := aBook	
 ]
 
 { #category : #accessing }

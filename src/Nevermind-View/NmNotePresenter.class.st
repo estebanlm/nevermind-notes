@@ -1,8 +1,9 @@
 Class {
 	#name : #NmNotePresenter,
 	#superclass : #SpPresenter,
+	#traits : 'NmTApplication',
+	#classTraits : 'NmTApplication classTrait',
 	#instVars : [
-		'sourceView',
 		'note',
 		'actionBar',
 		'sourcePresenter',
@@ -53,6 +54,25 @@ NmNotePresenter >> doExport [
 ]
 
 { #category : #actions }
+NmNotePresenter >> doMoveNote [
+	| book |
+
+	book := self application newSelect 
+		title: 'Move Note';
+		label: ('Move {1} too...' format: { self note firstLine });
+		items: ((self application model allBooks 
+			reject: [ :each | each voyageId = self note bookId ])
+			sorted: #name ascending);
+		display: [ :aBook | aBook name ];
+		openModalWithSpecParent: self window.
+	book ifNil: [ ^ self ].
+	
+	self application 
+		moveNote: note 
+		toBook: book
+]
+
+{ #category : #actions }
 NmNotePresenter >> doToggleNotePanel [
 
 	toggleNotePanelAction ifNil: [ ^ self ].
@@ -62,8 +82,7 @@ NmNotePresenter >> doToggleNotePanel [
 { #category : #'actions search' }
 NmNotePresenter >> highlightSearchText: aBoolean [
 
-	GtkRunLoop defer: [
-		sourceView textBuffer searchContext highlight: aBoolean ]
+	sourcePresenter highlightSearchText: aBoolean
 ]
 
 { #category : #initialization }
@@ -79,14 +98,20 @@ NmNotePresenter >> initializePresenters [
 	self layout: (SpBoxLayout newVertical
 		add: (actionBar := self newActionBar) expand: false;
 		add: (SpOverlayLayout new 
-			child: ((sourcePresenter := self newGtkWidget)
-				widget: self newSourceView;
-				yourself);
+			child: (sourcePresenter := self instantiate: SpMarkdownPresenter);
 			addOverlay: (searchPanel := self instantiate: NmSearchTextPresenter on: self) 
 				withConstraints: [ :c | c vAlignStart; hAlignEnd ];
 			yourself);
 		yourself).
 
+	sourcePresenter 
+		languageManager: self application languageManager;
+		styleScheme: self application styleScheme;
+		textWidth: self application textWidth;
+		margin: self application noteMargin;
+		whenTextChangedDo: [ :aString | self textChanged: aString ].
+	self loadNote.
+	
 	"For some reason, hide just works fine once widget is built :("
 	self whenBuiltDo: [ searchPanel hide. ].
 
@@ -112,46 +137,15 @@ NmNotePresenter >> initializeWindow: aWindowPresenter [
 ]
 
 { #category : #private }
-NmNotePresenter >> languageMarkdown [
-	
-	^ self application languageMarkdown
-]
-
-{ #category : #private }
 NmNotePresenter >> loadNote [
 
-	GtkRunLoop defer: [ 
-		sourceView textBuffer text: self note contents ]
+	sourcePresenter text: self note contents
 ]
 
 { #category : #private }
 NmNotePresenter >> margin [
 
 	^ self application noteMargin
-]
-
-{ #category : #initialization }
-NmNotePresenter >> newSourceView [
-	| scrolledWindow |
-
-	sourceView := GtkSourceView new
-		addClass: 'noteText';
-		connectSizeAllocate: [ :aRect | self calculateMargin: aRect of: sourceView ];
-		tabWidth: 4;
-		beWrapWord;
-		yourself.
-
-	sourceView textBuffer: (GtkSourceBuffer new 
-		language: self languageMarkdown;
-		styleScheme: self styleScheme;
-		text: self note contents;
-		connectChanged: [ self textChanged ];
-		yourself).
-
-	scrolledWindow := GtkScrolledWindow newWidget: sourceView.
-	scrolledWindow addClass: 'note'.
-		
-	^ scrolledWindow showAll
 ]
 
 { #category : #accessing }
@@ -170,34 +164,19 @@ NmNotePresenter >> note: aNote [
 { #category : #'actions search' }
 NmNotePresenter >> searchBackward [
 
-	GtkRunLoop defer: [
-		| buffer |
-		buffer := sourceView textBuffer.
-		buffer searchContext 
-			backwardThenDo: [ :start :end :wrappedAround | 
-				buffer
-					selectRangeInsert: start 
-					bound: end ] ]
+	sourcePresenter searchBackward
 ]
 
 { #category : #'actions search' }
 NmNotePresenter >> searchForward [
 
-	GtkRunLoop defer: [
-		| buffer |
-		buffer := sourceView textBuffer.
-		buffer searchContext 
-			forwardThenDo: [ :start :end :wrappedAround | 
-				buffer
-					selectRangeInsert: start 
-					bound: end ] ]
+	sourcePresenter searchForward
 ]
 
 { #category : #'actions search' }
 NmNotePresenter >> searchText: aString [
 
-	GtkRunLoop defer: [
-		sourceView textBuffer searchContext searchText: aString ]
+	sourcePresenter searchText: aString
 ]
 
 { #category : #'accessing model' }
@@ -213,16 +192,14 @@ NmNotePresenter >> styleScheme [
 ]
 
 { #category : #private }
-NmNotePresenter >> textChanged [
-	| newText |
-	
-	newText := sourceView text.
-	newText ifEmpty: [ ^ self ].
+NmNotePresenter >> textChanged: aString [
+
+	aString ifEmpty: [ ^ self ].
 
 	[
 		"I put this outside to leave the callback (then it does not interfere with the UI"
-		self note contents: newText.
-		self application notificationCenter notify: (NmNoteChangedNotification newNote: self note)
+		self note contents: aString.
+		self notify: (NmNoteChangedNotification newNote: self note)
 	] schedule
 
 ]
@@ -230,8 +207,7 @@ NmNotePresenter >> textChanged [
 { #category : #accessing }
 NmNotePresenter >> themeChanged [
 
-	GtkRunLoop defer: [ 
-		sourceView textBuffer styleScheme: self styleScheme ]
+	sourcePresenter styleScheme: self styleScheme
 ]
 
 { #category : #events }

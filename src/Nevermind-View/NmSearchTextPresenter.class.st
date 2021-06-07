@@ -1,8 +1,8 @@
 Class {
 	#name : #NmSearchTextPresenter,
 	#superclass : #SpPresenter,
-	#traits : 'SpTModel',
-	#classTraits : 'SpTModel classTrait',
+	#traits : 'SpTModel + NmTApplication',
+	#classTraits : 'SpTModel classTrait + NmTApplication classTrait',
 	#instVars : [
 		'searchText',
 		'forwardButton',

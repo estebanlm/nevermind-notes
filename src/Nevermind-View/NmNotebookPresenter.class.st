@@ -1,6 +1,6 @@
 Class {
 	#name : #NmNotebookPresenter,
-	#superclass : #SgaPresenter,
+	#superclass : #NmPresenter,
 	#instVars : [
 		'noteList',
 		'noteContent',
@@ -52,7 +52,9 @@ NmNotebookPresenter >> addGlobalShortcutsTo: aWindowPresenter [
 		bindKeyCombination: NmOpenBookCommand defaultShortcut 
 			toAction: [ (NmOpenBookCommand forContext: self) execute ];		
 		bindKeyCombination: NmAddNoteCommand defaultShortcut 
-			toAction: [ (NmAddNoteCommand forContext: self) execute ]
+			toAction: [ (NmAddNoteCommand forContext: self) execute ];
+		bindKeyCombination: NmMoveNoteCommand defaultShortcut 
+			toAction: [ (NmMoveNoteCommand forContext: self) execute ]
 ]
 
 { #category : #accessing }
@@ -74,6 +76,12 @@ NmNotebookPresenter >> doAddNote [
 	self updatePresenter.
 	noteList selectFirst.
 	noteContent takeKeyboardFocus
+]
+
+{ #category : #actions }
+NmNotebookPresenter >> doMoveNote [
+	
+	noteContent showingPresenter doMoveNote
 ]
 
 { #category : #actions }
@@ -166,10 +174,11 @@ NmNotebookPresenter >> initializePresenters [
 { #category : #initialization }
 NmNotebookPresenter >> initializeSubscribers [
 
-	self application notificationCenter
+	self notificationCenter
+		subscribe: self to: NmThemeChanged;
 		subscribe: self to: NmBookActivatedNotification; 
 		subscribe: self to: NmNoteChangedNotification;
-		subscribe: self to: NmThemeChanged
+		subscribe: self to: NmNoteMovedNotification
 ]
 
 { #category : #initialization }
@@ -213,24 +222,11 @@ NmNotebookPresenter >> noteListActions [
 
 	^ CmCommandGroup forSpec
 		beRoot;
+		register: (NmMoveNoteCommand forSpecContext: self);
 		register: ((CmCommandGroup named: 'Critical') asSpecGroup
 			beDisplayedAsGroup;
 			register: (NmRemoveNoteCommand forSpecContext: self);
 			yourself);
-		"register: ((CmCommandGroup named: 'Pomodoro') asSpecGroup
-			beDisplayedAsGroup;
-			register: (CrTodoTaskStartPomodoroCommand forSpecContext: self);
-			yourself);
-		register: ((CmCommandGroup named: 'Management') asSpecGroup
-			beDisplayedAsGroup;
-			register: (CrTodoViewArchivedCommand forSpecContext: self);
-			yourself);
-		register: ((CmCommandGroup named: 'Critical') asSpecGroup
-			beDisplayedAsGroup;
-			register: (CrTodoArchiveCompletedCommand forSpecContext: self);
-			register: (CrTodoTaskArchiveCommand forSpecContext: self);
-			register: (CrTodoTaskDeleteCommand forSpecContext: self);
-			yourself);"
 		yourself
 ]
 
@@ -243,7 +239,9 @@ NmNotebookPresenter >> noteListKeyBindings [
 { #category : #initialization }
 NmNotebookPresenter >> noteListMenu [
 		
-	^ self noteListActions asMenuPresenter
+	^ self noteListActions 
+		prepareForContextMenu;
+		asMenuPresenter
 ]
 
 { #category : #'notification handling' }
@@ -257,10 +255,15 @@ NmNotebookPresenter >> noteNoteChanged: aNotification [
 
 	noteList presenters 
 		detect: [ :each | each note = aNotification note ]
-		ifFound: [ :aPresenter | aPresenter updatePresenter ].
-		
+		ifFound: [ :aPresenter | aPresenter updatePresenter ]
+]
 
+{ #category : #'notification handling' }
+NmNotebookPresenter >> noteNoteMoved: aNotification [
 
+	aNotification book = self applicationModel activeBook 
+		ifFalse: [ self application activateBook: aNotification book ].
+	self updateNoteListFromNoteChanged: aNotification note
 ]
 
 { #category : #'notification handling' }
@@ -306,7 +309,7 @@ NmNotebookPresenter >> updateNote: aNote [
 	noteContent setModel: aNote
 ]
 
-{ #category : #'notification handling' }
+{ #category : #private }
 NmNotebookPresenter >> updateNoteListFromNoteChanged: aNote [
 
 	updatingListFromNotification := true.

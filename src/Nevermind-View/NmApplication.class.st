@@ -37,6 +37,14 @@ NmApplication class >> validateSession [
 	session := Smalltalk session
 ]
 
+{ #category : #actions }
+NmApplication >> activateBook: aBook [
+
+	self model activeBook = aBook ifTrue: [ ^ self ].
+	self model activateBook: aBook.
+	self notify: (NmBookActivatedNotification newBook: aBook)
+]
+
 { #category : #'accessing icons' }
 NmApplication >> buttonIconNamed: aString [
 
@@ -102,12 +110,6 @@ NmApplication >> languageManager [
 					yourself" ] ]
 ]
 
-{ #category : #'accessing resources' }
-NmApplication >> languageMarkdown [
-
-	^ self languageManager languageWithId: 'markdown' 
-]
-
 { #category : #'accessing icons' }
 NmApplication >> menuIconNamed: aString [
 
@@ -120,6 +122,16 @@ NmApplication >> model [
 	^ NmModelApplication current
 ]
 
+{ #category : #actions }
+NmApplication >> moveNote: aNote toBook: aBook [
+
+	aNote book = aBook ifTrue: [ ^ self ].
+  	aNote 
+		moveTo: aBook;
+		save.
+	self notify: (NmNoteMovedNotification newNote: aNote book: aBook)
+]
+
 { #category : #'accessing resources' }
 NmApplication >> noteMargin [
 
@@ -128,6 +140,12 @@ NmApplication >> noteMargin [
 		left: 40 
 		bottom: 100 
 		right: 40
+]
+
+{ #category : #actions }
+NmApplication >> notify: aNotification [
+
+	self notificationCenter notify: aNotification
 ]
 
 { #category : #running }
