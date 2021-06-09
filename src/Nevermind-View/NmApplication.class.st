@@ -175,9 +175,10 @@ NmApplication >> styleScheme [
 	"Notes themes: 'notes-light', 'notes-dark'
 	 Default themes: 'classic' 'cobalt' 'kate' 'oblivion' 'solarized-dark' 'solarized-light' 'tango'"
 
-	^ self styleSchemeManager schemeWithId: (self configuration isDarkTheme 
-		ifTrue: [ 'notes-dark' ]
-		ifFalse: [ 'notes-light' ])
+	^ GtkRunLoop defer: [ 
+		self styleSchemeManager schemeWithId: (self configuration isDarkTheme 
+			ifTrue: [ 'notes-dark' ]
+			ifFalse: [ 'notes-light' ]) ]
 ]
 
 { #category : #'accessing resources' }
