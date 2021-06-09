@@ -11,7 +11,8 @@ Class {
 		'toggleNotePanelAction',
 		'toggleNotePanelButton',
 		'searchText',
-		'searchPanel'
+		'searchPanel',
+		'updating'
 	],
 	#category : #'Nevermind-View-Notebook'
 }
@@ -88,6 +89,7 @@ NmNotePresenter >> highlightSearchText: aBoolean [
 { #category : #initialization }
 NmNotePresenter >> initialize [
 
+	updating := false.
 	notePanelVisible := true.
 	super initialize
 ]
@@ -110,7 +112,6 @@ NmNotePresenter >> initializePresenters [
 		textWidth: self application textWidth;
 		margin: self application noteMargin;
 		whenTextChangedDo: [ :aString | self textChanged: aString ].
-	self loadNote.
 	
 	"For some reason, hide just works fine once widget is built :("
 	self whenBuiltDo: [ searchPanel hide. ].
@@ -137,12 +138,6 @@ NmNotePresenter >> initializeWindow: aWindowPresenter [
 ]
 
 { #category : #private }
-NmNotePresenter >> loadNote [
-
-	sourcePresenter text: self note contents
-]
-
-{ #category : #private }
 NmNotePresenter >> margin [
 
 	^ self application noteMargin
@@ -158,7 +153,7 @@ NmNotePresenter >> note [
 NmNotePresenter >> note: aNote [
 
 	note := aNote.
-	self loadNote
+	self updatePresenter
 ]
 
 { #category : #'actions search' }
@@ -194,6 +189,7 @@ NmNotePresenter >> styleScheme [
 { #category : #private }
 NmNotePresenter >> textChanged: aString [
 
+	updating ifTrue: [ ^ self ].
 	aString ifEmpty: [ ^ self ].
 
 	[
@@ -208,6 +204,22 @@ NmNotePresenter >> textChanged: aString [
 NmNotePresenter >> themeChanged [
 
 	sourcePresenter styleScheme: self styleScheme
+]
+
+{ #category : #initialization }
+NmNotePresenter >> updatePresenter [
+
+	updating := true.
+	
+	note 
+		ifNotNil: [ 
+			sourcePresenter enabled: true.
+			sourcePresenter text: note contents ]
+		ifNil: [ 
+			sourcePresenter enabled: false. 
+			sourcePresenter text: '' ].
+		
+	updating := false
 ]
 
 { #category : #events }

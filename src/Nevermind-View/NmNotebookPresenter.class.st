@@ -161,7 +161,7 @@ NmNotebookPresenter >> initializePresenters [
 		contextKeyBindings: self noteListKeyBindings;
 		activateOnDoubleClick;
 		whenActivatedDo: [ :selection | self activateNote: selection selectedItem ].
-		
+			
 	noteContent
 		when: [ :aNote | aNote notNil ] show: [ :aNote | self newNotePresenter: aNote ];
 		when: [ :aNote | aNote isNil ] show: [ self newEmptyMesssage ].
