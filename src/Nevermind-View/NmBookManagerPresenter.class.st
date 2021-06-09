@@ -11,7 +11,13 @@ Class {
 }
 
 { #category : #initialization }
-NmBookManagerPresenter >> bookListMenu [
+NmBookManagerPresenter >> addGlobalShortcutsTo: aWindowPresenter [
+
+	aWindowPresenter contextKeyBindings: self bookListActions asKMCategory
+]
+
+{ #category : #initialization }
+NmBookManagerPresenter >> bookListActions [
 
 	^ CmCommandGroup forSpec
 		beRoot;
@@ -25,6 +31,13 @@ NmBookManagerPresenter >> bookListMenu [
 			beDisplayedAsGroup;
 			register: (NmRemoveBookCommand forSpecContext: self);
 			yourself);
+		yourself
+]
+
+{ #category : #initialization }
+NmBookManagerPresenter >> bookListMenu [
+
+	^ self bookListActions
 		prepareForContextMenu;
 		asMenuPresenter.
 ]
@@ -79,6 +92,28 @@ WARNING: You cannot undo this action!') format: { book name });
 
 { #category : #actions }
 NmBookManagerPresenter >> doRenameSelectedBook [
+	| book newName |
+	
+	book := bookList selectedItem.
+	book ifNil: [ ^ self ].
+
+	newName := self application newRequest 
+		title: 'Rename Book';
+		label: ('Rename {1} to:' format: { book name });
+		text: book name;
+		acceptLabel: 'Rename';
+		openModalWithSpecParent: self window.
+		
+	(newName isEmptyOrNil or: [ newName = book name ])
+		ifTrue: [ ^ self ].
+		
+	book name: newName.
+	book save.
+	
+	self updatePresenter.
+	bookList selectItem: book.
+	
+	self notify: (NmBookRenamedNotification newBook: book)
 ]
 
 { #category : #initialization }
@@ -108,6 +143,7 @@ NmBookManagerPresenter >> initializePresenters [
 { #category : #initialization }
 NmBookManagerPresenter >> initializeWindow: aWindowPresenter [
 
+	super initializeWindow: aWindowPresenter.
 	aWindowPresenter title: 'Books...'
 ]
 

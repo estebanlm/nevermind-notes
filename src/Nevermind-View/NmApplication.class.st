@@ -132,6 +132,38 @@ NmApplication >> moveNote: aNote toBook: aBook [
 	self notify: (NmNoteMovedNotification newNote: aNote book: aBook)
 ]
 
+{ #category : #'instance creation' }
+NmApplication >> newConfirm [
+
+	^ super newConfirm
+		icon: nil"(self buttonIconNamed: 'gtk-dialog-question')";
+		yourself
+]
+
+{ #category : #'instance creation' }
+NmApplication >> newInform [
+
+	^ super newInform
+		icon: nil"(self buttonIconNamed: 'gtk-dialog-info')";
+		yourself
+]
+
+{ #category : #'instance creation' }
+NmApplication >> newRequest [
+
+	^ super newRequest
+		icon: nil"(self buttonIconNamed: 'gtk-dialog-question')";
+		yourself
+]
+
+{ #category : #'instance creation' }
+NmApplication >> newRequestText [
+
+	^ super newRequestText
+		icon: nil"(self buttonIconNamed: 'gtk-dialog-question')";
+		yourself
+]
+
 { #category : #'accessing resources' }
 NmApplication >> noteMargin [
 
