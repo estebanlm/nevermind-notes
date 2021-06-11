@@ -9,7 +9,6 @@ BaselineOfNotes >> baseline: spec [
 	<baseline>
 	
 	spec for: #pharo do: [
-
 		self ztimestamp: spec.
 		self voyage: spec.
 		self persistenceQuery: spec.
@@ -17,10 +16,17 @@ BaselineOfNotes >> baseline: spec [
 		self objCBridge: spec.
 		self stargate: spec.
 		"self macPack: spec."
+		self osSubprocess: spec.
+		self osWinSubprocess: spec.
 
 		spec 
 			package: 'Nevermind-Model' with: [ 
-				spec requires: #('ZTimestamp' 'Voyage' 'PersistenceQuery') ];
+				spec requires: #(
+					'ZTimestamp' 
+					'Voyage' 
+					'PersistenceQuery' 
+					'OSSubprocess' 
+					'OSWinSubprocess') ];
 			package: 'Nevermind-View' with: [ 
 				spec requires: #('Stargate') ] ]
 ]
@@ -30,7 +36,7 @@ BaselineOfNotes >> macPack: spec [
 
 	spec
 		baseline: 'MacPack'
-		with: [ spec repository: 'github://estebanlm/macpack' ]
+		with: [ spec repository: 'github://estebanlm/macpack' ] 
 ]
 
 { #category : #'external projects' }
@@ -39,6 +45,20 @@ BaselineOfNotes >> objCBridge: spec [
 	spec
 		baseline: 'ObjCBridge'
 		with: [ spec repository: 'github://estebanlm/objcbridge' ]
+]
+
+{ #category : #'external projects' }
+BaselineOfNotes >> osSubprocess: spec [
+		
+	spec baseline: 'OSSubprocess' with: [ 
+		spec repository: 'github://pharo-contributions/OSSubprocess:v1.3.0' ]
+]
+
+{ #category : #'external projects' }
+BaselineOfNotes >> osWinSubprocess: spec [
+		
+	spec baseline: 'OSWinSubprocess' with: [
+		spec repository: 'github://pharo-contributions/OSWinSubprocess:v1' ]
 ]
 
 { #category : #'external projects' }
