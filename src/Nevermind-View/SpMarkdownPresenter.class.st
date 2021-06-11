@@ -5,7 +5,7 @@ Class {
 		'#textWidth',
 		'#margin',
 		'#languageManager',
-		'#styleScheme => SpObservableSlot'
+		'#styleScheme => ObservableSlot'
 	],
 	#category : #'Nevermind-View-Utils'
 }
