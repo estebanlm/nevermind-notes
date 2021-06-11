@@ -131,7 +131,7 @@ NmBookManagerPresenter >> initializePresenters [
 	actionBar 
 		add: (NmAddBookCommand forSpecContext: self) asActionButtonPresenter;
 		add: (deleteButton := (NmRemoveBookCommand forSpecContext: self) asActionButtonPresenter);
-		addLast: (openButton := (NmActivateBookCommand forSpecContext: self) asLabelledActionButtonPresenter).
+		addLast: (openButton := (NmActivateBookCommand forSpecContext: self) asLabeledActionButtonPresenter).
 			
 	deleteButton enabled: false.
 	openButton enabled: false.
