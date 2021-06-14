@@ -34,6 +34,12 @@ NmNote class >> isVoyageRoot [
 ]
 
 { #category : #accessing }
+NmNote class >> maxFileNameLength [
+
+	^ 30
+]
+
+{ #category : #accessing }
 NmNote class >> maxLength [
 
 	^ 60
@@ -133,6 +139,14 @@ NmNote >> contents: aString [
 	self setContents: aString.
 	self updateLastEditionDate.
 	NmNoteCommiter uniqueInstance queue: self
+]
+
+{ #category : #accessing }
+NmNote >> fileName [
+
+	^ self rawFirstLine 
+		ifNotEmpty: [ :aString | aString truncateTo: self class maxFileNameLength ]
+		ifEmpty: [ self class emptyTitle ]
 ]
 
 { #category : #accessing }

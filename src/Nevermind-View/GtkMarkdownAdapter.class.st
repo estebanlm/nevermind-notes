@@ -1,7 +1,7 @@
 Class {
 	#name : #GtkMarkdownAdapter,
 	#superclass : #GtkTextAdapter,
-	#category : #'Nevermind-View-Utils'
+	#category : #'Nevermind-View-Spec'
 }
 
 { #category : #adding }

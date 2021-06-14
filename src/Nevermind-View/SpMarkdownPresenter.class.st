@@ -7,7 +7,7 @@ Class {
 		'#languageManager',
 		'#styleScheme => ObservableSlot'
 	],
-	#category : #'Nevermind-View-Utils'
+	#category : #'Nevermind-View-Spec'
 }
 
 { #category : #specs }

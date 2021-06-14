@@ -50,8 +50,32 @@ NmNotePresenter >> defaultKeyboardFocus [
 
 { #category : #actions }
 NmNotePresenter >> doExport [
+	| export fileName |
 	
-	self flag: #TODO.
+	export := self application newFileChooser
+		beSave;
+		title: ('Export as...'); 
+		acceptLabel: 'Export';
+		overrideConfirmation: true;
+		addChoice: 'Format' 
+			options: #('pdf' 'odt' 'docx' 'epub' 'html') 
+			selectedIndex: 1; 
+		addBooleanChoice: 'Open exported document' default: true;
+		currentName: self note fileName;
+		openModalWithSpecParent: self window.
+
+	export ifNil: [ ^ self ].
+	
+	fileName := (export fileReference withExtension: export choices first) fullName.	
+	NmPandocExporter new 
+		exportNote: self note 
+		to: fileName
+		format: export choices first.
+		
+	self halt.
+	export choices second ifTrue: [ 
+		NmDocumentOpener new open: fileName ]
+
 ]
 
 { #category : #actions }
@@ -80,6 +104,12 @@ NmNotePresenter >> doToggleNotePanel [
 	notePanelVisible := toggleNotePanelAction value
 ]
 
+{ #category : #accessing }
+NmNotePresenter >> fontSize [
+
+	^ 'noteTextSize1'
+]
+
 { #category : #'actions search' }
 NmNotePresenter >> highlightSearchText: aBoolean [
 
@@ -106,7 +136,9 @@ NmNotePresenter >> initializePresenters [
 			yourself);
 		yourself).
 
-	sourcePresenter 
+	sourcePresenter
+		addStyle: 'noteText';
+		addStyle: self fontSize; 
 		languageManager: self application languageManager;
 		styleScheme: self application styleScheme;
 		textWidth: self application textWidth;
