@@ -36,6 +36,23 @@ NmFileChooserDialog class >> defaultTitle [
 	^ 'Open...'
 ]
 
+{ #category : #examples }
+NmFileChooserDialog class >> example [ 
+
+	^ (self newApplication: (SpApplication new useBackend: #Gtk))
+		beSave;
+		title: 'Export as...'; 
+		acceptLabel: 'Export';
+		overrideConfirmation: true;
+		addChoice: 'Format' 
+			options: #('pdf' 'odt' 'docx' 'epub' 'html') 
+			selectedIndex: 1; 
+		addBooleanChoice: 'Open exported document' default: true;
+		currentName: 'test';
+		openModalWithSpec.
+
+]
+
 { #category : #'instance creation' }
 NmFileChooserDialog class >> newApplication: anApplication [
 

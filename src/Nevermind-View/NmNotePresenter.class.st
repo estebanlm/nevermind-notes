@@ -148,7 +148,9 @@ NmNotePresenter >> initializePresenters [
 		styleScheme: self application styleScheme;
 		textWidth: self application textWidth;
 		margin: self application noteMargin;
-		whenTextChangedDo: [ :aString | self textChanged: aString ].
+		whenTextChangedDo: [ :aString | self textChanged: aString ];
+		bindKeyCombination: $b control toAction: [ self doToggleNotePanel ];
+		bindKeyCombination: $l control toAction: [ self showLanguageMenu ].
 	
 	"For some reason, hide just works fine once widget is built :("
 	self whenBuiltDo: [ searchPanel hide. ].
@@ -248,6 +250,12 @@ NmNotePresenter >> selectLanguage: aName [
 NmNotePresenter >> setModelBeforeInitialization: aNote [ 
 
 	note := aNote
+]
+
+{ #category : #private }
+NmNotePresenter >> showLanguageMenu [
+
+	self languagesMenu openWithSpecAtPointer
 ]
 
 { #category : #private }
