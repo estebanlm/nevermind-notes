@@ -5,7 +5,8 @@ Class {
 		'#textWidth',
 		'#margin',
 		'#languageManager',
-		'#styleScheme => ObservableSlot'
+		'#styleScheme => ObservableSlot',
+		'#spellLanguage => ObservableSlot'
 	],
 	#category : #'Nevermind-View-Spec'
 }
@@ -65,6 +66,19 @@ SpMarkdownPresenter >> searchText: aString [
 ]
 
 { #category : #accessing }
+SpMarkdownPresenter >> spellLanguage [
+
+	^ spellLanguage
+]
+
+{ #category : #accessing }
+SpMarkdownPresenter >> spellLanguage: aString [
+	"e.g. 'English'. 'Spanish'. 'French (France)'"
+
+	spellLanguage := aString
+]
+
+{ #category : #accessing }
 SpMarkdownPresenter >> styleScheme [
 
 	^ styleScheme
@@ -86,6 +100,12 @@ SpMarkdownPresenter >> textWidth [
 SpMarkdownPresenter >> textWidth: anObject [
 
 	textWidth := anObject
+]
+
+{ #category : #events }
+SpMarkdownPresenter >> whenSpellLanguageChangedDo: aBlock [
+
+	self property: #spellLanguage whenChangedDo: aBlock
 ]
 
 { #category : #events }

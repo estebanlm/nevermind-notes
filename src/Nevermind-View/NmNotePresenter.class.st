@@ -17,6 +17,12 @@ Class {
 	#category : #'Nevermind-View-Notebook'
 }
 
+{ #category : #'as yet unclassified' }
+NmNotePresenter class >> languageNoneLabel [
+
+	^ 'None'
+]
+
 { #category : #private }
 NmNotePresenter >> calculateMargin: aRect of: aGtkSourceView [
 	| w textWidth margin |
@@ -72,7 +78,6 @@ NmNotePresenter >> doExport [
 		to: fileName
 		format: export choices first.
 		
-	self halt.
 	export choices second ifTrue: [ 
 		NmDocumentOpener new open: fileName ]
 
@@ -155,6 +160,10 @@ NmNotePresenter >> initializePresenters [
 			whenActivatedDo: [ self doToggleNotePanel ];
 			whenDeactivatedDo: [ self doToggleNotePanel ];
 			yourself)	;
+		addLast: (self newMenuButton 
+			icon: (self application buttonIconNamed: 'gtk-spell-check');
+			menu: [ self languagesMenu ];
+			yourself);
 		addLast: (self newButton 
 			icon: (self application buttonIconNamed: 'document-export');
 			action: [ self doExport ];
@@ -167,6 +176,25 @@ NmNotePresenter >> initializeWindow: aWindowPresenter [
 	aWindowPresenter 
 		title: 'Note';
 		initialExtent: self application defaultMainWindowExtent
+]
+
+{ #category : #initialization }
+NmNotePresenter >> languagesMenu [
+	| menu languagesAvailable |		
+	
+	languagesAvailable := GtkRunLoop defer: [ GspellLanguage available collect: #name ].
+	menu := self newMenu.
+	menu addItem: [ :item | 
+		item 
+			name: self class languageNoneLabel; 
+			action: [ self selectLanguage: nil ] ].
+	menu addGroup: [ :group |
+		languagesAvailable do: [ :each | 
+				group addItem: [ :item | 
+					item name: each; action: [ self selectLanguage: each ] ] ] ].
+	
+	^ menu
+	
 ]
 
 { #category : #private }
@@ -206,6 +234,16 @@ NmNotePresenter >> searchText: aString [
 	sourcePresenter searchText: aString
 ]
 
+{ #category : #private }
+NmNotePresenter >> selectLanguage: aName [
+
+	sourcePresenter spellLanguage = aName
+		ifTrue: [ ^ self ].
+		
+	sourcePresenter spellLanguage: aName.
+	self application schedule: [ note changeLanguageTo: aName ]
+]
+
 { #category : #'accessing model' }
 NmNotePresenter >> setModelBeforeInitialization: aNote [ 
 
@@ -224,11 +262,11 @@ NmNotePresenter >> textChanged: aString [
 	updating ifTrue: [ ^ self ].
 	aString ifEmpty: [ ^ self ].
 
-	[
+	self application schedule: [
 		"I put this outside to leave the callback (then it does not interfere with the UI"
 		self note contents: aString.
 		self notify: (NmNoteChangedNotification newNote: self note)
-	] schedule
+	]
 
 ]
 
@@ -246,7 +284,8 @@ NmNotePresenter >> updatePresenter [
 	note 
 		ifNotNil: [ 
 			sourcePresenter enabled: true.
-			sourcePresenter text: note contents ]
+			sourcePresenter text: note contents.
+			sourcePresenter spellLanguage: note language ]
 		ifNil: [ 
 			sourcePresenter enabled: false. 
 			sourcePresenter text: '' ].

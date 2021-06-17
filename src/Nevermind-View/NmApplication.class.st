@@ -1,6 +1,9 @@
 Class {
 	#name : #NmApplication,
 	#superclass : #SgaApplication,
+	#instVars : [
+		'scheduler'
+	],
 	#classInstVars : [
 		'session'
 	],
@@ -75,7 +78,8 @@ NmApplication >> initialize [
 
 	super initialize.
 	self initializeBackend.
-	self initializeModel
+	self initializeModel.
+	self initializeScheduler.
 ]
 
 { #category : #initialization }
@@ -95,6 +99,14 @@ NmApplication >> initializeBackend [
 NmApplication >> initializeModel [
 	
 	NmModelApplication reset
+]
+
+{ #category : #initialization }
+NmApplication >> initializeScheduler [
+
+	scheduler := TKTWorkerPool new.
+	scheduler poolMaxSize: 5.
+	scheduler start
 ]
 
 { #category : #'accessing resources' }
@@ -126,9 +138,7 @@ NmApplication >> model [
 NmApplication >> moveNote: aNote toBook: aBook [
 
 	aNote book = aBook ifTrue: [ ^ self ].
-  	aNote 
-		moveTo: aBook;
-		save.
+  	aNote moveTo: aBook.
 	self notify: (NmNoteMovedNotification newNote: aNote book: aBook)
 ]
 
@@ -191,6 +201,12 @@ NmApplication >> run [
 
 	Current := self.
 	super run
+]
+
+{ #category : #schedulling }
+NmApplication >> schedule: aBlock [
+
+	scheduler schedule: aBlock
 ]
 
 { #category : #running }

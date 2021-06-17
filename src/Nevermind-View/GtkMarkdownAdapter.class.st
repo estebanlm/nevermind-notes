@@ -1,10 +1,13 @@
 Class {
 	#name : #GtkMarkdownAdapter,
 	#superclass : #GtkTextAdapter,
+	#instVars : [
+		'spellTextBuffer'
+	],
 	#category : #'Nevermind-View-Spec'
 }
 
-{ #category : #adding }
+{ #category : #building }
 GtkMarkdownAdapter >> addMarkdownFeaturesTo: gtkSourceView [
 	
 	gtkSourceView
@@ -15,18 +18,46 @@ GtkMarkdownAdapter >> addMarkdownFeaturesTo: gtkSourceView [
 	self presenter whenStyleSchemeChangedDo: [ :newScheme | 
 		gtkSourceView textBuffer styleScheme: newScheme ].
 
-	gtkSourceView textBuffer: (GtkSourceBuffer new 
-		language: (self presenter languageManager languageWithId: 'markdown');
-		infiniteUndoLevels;
-		styleScheme: self presenter styleScheme;
-		yourself)
+	gtkSourceView textBuffer: self newSourceBuffer.
+		
+	self presenter spellLanguage ifNotNil: [ :lang |
+		self 
+			addSpellCheckerTo: gtkSourceView 
+			buffer: gtkSourceView textBuffer 
+			language: lang ].
+	self presenter whenSpellLanguageChangedDo: [ :newLanguage | 
+		self innerWidgetDo: [ :w |
+			self 
+				addSpellCheckerTo: w 
+				buffer: w textBuffer 
+				language: newLanguage ] ]
 ]
 
-{ #category : #adding }
+{ #category : #building }
 GtkMarkdownAdapter >> addModelTo: gtkTextView [ 
 
 	self addMarkdownFeaturesTo: gtkTextView.	
 	super addModelTo: gtkTextView
+]
+
+{ #category : #building }
+GtkMarkdownAdapter >> addSpellCheckerTo: gtkWidget buffer: aTextBuffer language: aName [
+	| language spellChecker |
+
+	language := GspellLanguage languageNamed: aName.
+	language ifNil: [ 
+		self spellChecking: gtkWidget enable: false. 
+		^ self ].
+
+	self spellChecking: gtkWidget enable: true. 
+	spellTextBuffer ifNil: [ spellTextBuffer := aTextBuffer spellTextBuffer ].
+	spellChecker := spellTextBuffer spellChecker.
+	spellChecker getHandle isNull 
+		ifTrue: [ 
+			spellTextBuffer spellChecker: ((GspellChecker newLanguage: language)
+				connect: 'session-cleared' do: [ :w :d | 'OK' crTrace ];
+				yourself ) ]
+		ifFalse: [ spellChecker language: language ]
 ]
 
 { #category : #building }
@@ -35,7 +66,7 @@ GtkMarkdownAdapter >> bufferClass [
 	^ GtkSourceBuffer
 ]
 
-{ #category : #adding }
+{ #category : #private }
 GtkMarkdownAdapter >> calculateMargin: aRect of: aGtkSourceView [
 	| w textWidth margin |
 	
@@ -67,10 +98,21 @@ GtkMarkdownAdapter >> highlightSearchText: aBoolean [
 		w textBuffer searchContext highlight: aBoolean ]
 ]
 
-{ #category : #adding }
+{ #category : #accessing }
 GtkMarkdownAdapter >> margin [
 
 	^ self presenter margin
+]
+
+{ #category : #building }
+GtkMarkdownAdapter >> newSourceBuffer [
+	
+	^ self bufferClass new 
+		language: (self presenter languageManager languageWithId: 'markdown');
+		infiniteUndoLevels;
+		styleScheme: self presenter styleScheme;
+		yourself
+
 ]
 
 { #category : #'actions search' }
@@ -106,7 +148,16 @@ GtkMarkdownAdapter >> searchText: aString [
 		w textBuffer searchContext searchText: aString ]
 ]
 
-{ #category : #adding }
+{ #category : #building }
+GtkMarkdownAdapter >> spellChecking: gtkWidget enable: aBoolean [
+
+	gtkWidget spellTextView 
+		inlineSpellChecking: aBoolean";
+		languageMenuEnabled: aBoolean".
+	
+]
+
+{ #category : #accessing }
 GtkMarkdownAdapter >> textWidth [
 
 	^ self presenter textWidth

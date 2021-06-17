@@ -4,7 +4,8 @@ Class {
 	#instVars : [
 		'bookId',
 		'contents',
-		'lastEditionDate'
+		'lastEditionDate',
+		'language'
 	],
 	#category : #'Nevermind-Model'
 }
@@ -113,6 +114,13 @@ NmNote >> bookId: anId [
 	bookId := anId
 ]
 
+{ #category : #'persistence actions' }
+NmNote >> changeLanguageTo: languageString [
+
+	self language: languageString.
+	self save
+]
+
 { #category : #private }
 NmNote >> cleanFirstLine: aString [
 	| cleanLine |
@@ -171,15 +179,28 @@ NmNote >> initialize [
 ]
 
 { #category : #accessing }
+NmNote >> language [
+
+	^ language
+]
+
+{ #category : #accessing }
+NmNote >> language: aString [
+
+	language := aString
+]
+
+{ #category : #accessing }
 NmNote >> lastEditionDate [
 
 	^ lastEditionDate
 ]
 
-{ #category : #accessing }
+{ #category : #'persistence actions' }
 NmNote >> moveTo: book [
 
-	self bookId: book voyageId
+	self bookId: book voyageId.
+	self save
 ]
 
 { #category : #printing }
