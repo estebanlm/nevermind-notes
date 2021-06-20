@@ -6,6 +6,14 @@ Class {
 	#category : #'Nevermind-View-Commands'
 }
 
+{ #category : #converting }
+NmCommand class >> asGtkShortcutsShortcut [
+
+	^ GtkShortcutsShortcut 
+		newTitle: self defaultDescription 
+		shortcut: self defaultShortcut
+]
+
 { #category : #default }
 NmCommand class >> defaultIconName [
 
@@ -16,6 +24,12 @@ NmCommand class >> defaultIconName [
 NmCommand class >> defaultShortcut [
 
 	^ nil
+]
+
+{ #category : #default }
+NmCommand class >> group [
+
+	^ NmCommandNoteGroup general
 ]
 
 { #category : #'instance creation' }

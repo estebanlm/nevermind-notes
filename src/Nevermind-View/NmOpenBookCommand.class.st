@@ -28,6 +28,12 @@ NmOpenBookCommand class >> defaultShortcut [
 	^ $o platformMeta
 ]
 
+{ #category : #accessing }
+NmOpenBookCommand class >> group [
+
+	^ NmCommandNoteGroup book
+]
+
 { #category : #executing }
 NmOpenBookCommand >> execute [
 	

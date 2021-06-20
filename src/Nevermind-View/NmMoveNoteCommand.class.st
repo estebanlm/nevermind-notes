@@ -28,6 +28,12 @@ NmMoveNoteCommand class >> defaultShortcut [
 	^ $m platformMeta
 ]
 
+{ #category : #accessing }
+NmMoveNoteCommand class >> group [
+
+	^ NmCommandNoteGroup note
+]
+
 { #category : #executing }
 NmMoveNoteCommand >> execute [
 	

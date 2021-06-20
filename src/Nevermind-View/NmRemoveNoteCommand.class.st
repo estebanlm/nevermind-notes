@@ -28,6 +28,12 @@ NmRemoveNoteCommand class >> defaultShortcut [
 	^ $x platformMeta
 ]
 
+{ #category : #accessing }
+NmRemoveNoteCommand class >> group [
+
+	^ NmCommandNoteGroup note
+]
+
 { #category : #testing }
 NmRemoveNoteCommand >> canBeExecuted [
 

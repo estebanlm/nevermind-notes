@@ -49,6 +49,8 @@ NmNotebookPresenter >> activateNote: aNotePresenter [
 NmNotebookPresenter >> addGlobalShortcutsTo: aWindowPresenter [
 
 	aWindowPresenter 
+		bindKeyCombination: NmShowShortcutsCommand defaultShortcut 
+			toAction: [ (NmShowShortcutsCommand forContext: self) execute ];		
 		bindKeyCombination: NmOpenBookCommand defaultShortcut 
 			toAction: [ (NmOpenBookCommand forContext: self) execute ];		
 		bindKeyCombination: NmAddNoteCommand defaultShortcut 
@@ -119,6 +121,14 @@ NmNotebookPresenter >> doRemoveSelected [
 	self updatePresenter
 ]
 
+{ #category : #actions }
+NmNotebookPresenter >> doShowShortcuts [
+	
+	NmShorcutsDialog new 
+		parentWindow: self window;
+		open
+]
+
 { #category : #testing }
 NmNotebookPresenter >> hasSelectedNote [
 
@@ -152,9 +162,9 @@ NmNotebookPresenter >> initializePresenters [
 			icon: (self application buttonIconNamed: 'edit-find');
 			action: [ self doFindNote ];
 			yourself);"
-		add: (NmOpenBookCommand forSpecContext: self) asActionButtonPresenter;
-		add: (NmAddNoteCommand forSpecContext: self) asActionButtonPresenter;
-		add: (NmOpenPlaygroundCommand forSpecContext: self) asActionButtonPresenter.
+		add: (NmOpenBookCommand forSpecContext: self) asButtonPresenter;
+		add: (NmAddNoteCommand forSpecContext: self) asButtonPresenter;
+		add: (NmOpenPlaygroundCommand forSpecContext: self) asButtonPresenter.
 		
 	noteList
 		contextMenu: [ self noteListMenu ];

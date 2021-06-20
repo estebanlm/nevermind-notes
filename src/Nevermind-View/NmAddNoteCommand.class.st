@@ -28,6 +28,12 @@ NmAddNoteCommand class >> defaultShortcut [
 	^ $n platformMeta
 ]
 
+{ #category : #accessing }
+NmAddNoteCommand class >> group [
+
+	^ NmCommandNoteGroup book
+]
+
 { #category : #executing }
 NmAddNoteCommand >> execute [
 	

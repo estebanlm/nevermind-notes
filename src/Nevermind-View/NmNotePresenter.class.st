@@ -156,20 +156,13 @@ NmNotePresenter >> initializePresenters [
 	self whenBuiltDo: [ searchPanel hide. ].
 
 	actionBar 
-		add: ((toggleNotePanelButton := self newToggleButton) 
-			icon: (self application buttonIconNamed: 'sidebar');
-			state: true;
-			whenActivatedDo: [ self doToggleNotePanel ];
-			whenDeactivatedDo: [ self doToggleNotePanel ];
-			yourself)	;
+		add: (toggleNotePanelButton := (NmToggleNotePanelCommand forSpecContext: self) 
+			asToggleButtonPresenter)	;
 		addLast: (self newMenuButton 
 			icon: (self application buttonIconNamed: 'gtk-spell-check');
 			menu: [ self languagesMenu ];
 			yourself);
-		addLast: (self newButton 
-			icon: (self application buttonIconNamed: 'document-export');
-			action: [ self doExport ];
-			yourself)
+		addLast: (NmExportNoteCommand forSpecContext: self) asButtonPresenter
 ]
 
 { #category : #initialization }
