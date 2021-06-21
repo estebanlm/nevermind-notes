@@ -35,7 +35,7 @@ NmCommand class >> group [
 { #category : #'instance creation' }
 NmCommand class >> newActionButtonFor: aPresenter [
 	
-	^ (self forSpecContext: aPresenter) asButtonPresenter
+	^ (self forSpecContext: aPresenter) asActionButtonPresenter
 		owner: aPresenter;
 		yourself
 ]
@@ -43,7 +43,7 @@ NmCommand class >> newActionButtonFor: aPresenter [
 { #category : #'instance creation' }
 NmCommand class >> newButtonFor: aPresenter [
 	
-	^ (self forSpecContext: aPresenter) asButtonPresenter
+	^ (self forSpecContext: aPresenter) asActionButtonPresenter
 		owner: aPresenter;
 		yourself
 ]

@@ -162,7 +162,7 @@ NmNotePresenter >> initializePresenters [
 			icon: (self application buttonIconNamed: 'gtk-spell-check');
 			menu: [ self languagesMenu ];
 			yourself);
-		addLast: (NmExportNoteCommand forSpecContext: self) asButtonPresenter
+		addLast: (NmExportNoteCommand forSpecContext: self) asActionButtonPresenter
 ]
 
 { #category : #initialization }

@@ -162,9 +162,9 @@ NmNotebookPresenter >> initializePresenters [
 			icon: (self application buttonIconNamed: 'edit-find');
 			action: [ self doFindNote ];
 			yourself);"
-		add: (NmOpenBookCommand forSpecContext: self) asButtonPresenter;
-		add: (NmAddNoteCommand forSpecContext: self) asButtonPresenter;
-		add: (NmOpenPlaygroundCommand forSpecContext: self) asButtonPresenter.
+		add: (NmOpenBookCommand forSpecContext: self) asActionButtonPresenter;
+		add: (NmAddNoteCommand forSpecContext: self) asActionButtonPresenter;
+		add: (NmOpenPlaygroundCommand forSpecContext: self) asActionButtonPresenter.
 		
 	noteList
 		contextMenu: [ self noteListMenu ];
