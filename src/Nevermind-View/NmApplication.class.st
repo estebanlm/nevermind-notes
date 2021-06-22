@@ -151,12 +151,6 @@ NmApplication >> newConfirm [
 ]
 
 { #category : #'instance creation' }
-NmApplication >> newFileChooser [
-
-	^ NmFileChooserDialog newApplication: self
-]
-
-{ #category : #'instance creation' }
 NmApplication >> newInform [
 
 	^ super newInform
