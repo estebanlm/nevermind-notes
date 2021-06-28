@@ -181,12 +181,20 @@ NmNotePresenter >> languagesMenu [
 	menu := self newMenu.
 	menu addItem: [ :item | 
 		item 
-			name: self class languageNoneLabel; 
+			name: self class languageNoneLabel;
+			icon: (self application iconNamed: ((self note language isNil) 
+				ifTrue: [ 'checkbox-checked-symbolic' ]
+				ifFalse: [ 'checkbox-symbolic' ]));
 			action: [ self selectLanguage: nil ] ].
 	menu addGroup: [ :group |
 		languagesAvailable do: [ :each | 
 				group addItem: [ :item | 
-					item name: each; action: [ self selectLanguage: each ] ] ] ].
+					item 
+						name: each; 
+						icon: (self application iconNamed: ((self note language = each) 
+							ifTrue: [ 'checkbox-checked-symbolic' ]
+							ifFalse: [ 'checkbox-symbolic' ]));
+						action: [ self selectLanguage: each ] ] ] ].
 	
 	^ menu
 	
