@@ -36,7 +36,7 @@
   <style name="def:list-marker" foreground="#0C8DB1"/>
 
   <!-- Line-break -->
-  <style name="def:note" foreground="#191919"/>
+  <style name="def:note" background="#404040" foreground="#191919"/>
 
   <!-- Label -->
   <style name="def:preprocessor" foreground="#191919"/>
