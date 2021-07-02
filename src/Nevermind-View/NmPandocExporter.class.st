@@ -13,6 +13,7 @@ NmPandocExporter >> exportNote: aNote to: fileName format: format [
 	  
 	[
 		self runPandoc: {
+			'-f'. 'markdown_github'.
 			'-s'. tmpMarkdown fullName.
 			'-o'. fileName.
 			'-t'. format }. ] 
