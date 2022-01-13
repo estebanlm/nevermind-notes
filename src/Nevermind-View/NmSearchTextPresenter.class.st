@@ -69,7 +69,7 @@ NmSearchTextPresenter >> initialize [
 ]
 
 { #category : #initialization }
-NmSearchTextPresenter >> initializePresenter [
+NmSearchTextPresenter >> initializePresenters [
 
 	self layout: (SpBoxLayout newHorizontal
 		borderWidth: 5;

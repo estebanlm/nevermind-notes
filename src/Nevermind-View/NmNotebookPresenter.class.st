@@ -224,7 +224,11 @@ NmNotebookPresenter >> newNotePresenter: aNote [
 { #category : #'notification handling' }
 NmNotebookPresenter >> noteBookActivated: aNotification [
 
-	self updatePresenter
+	notePanel show.
+	self updatePresenter.
+	noteList items ifNotEmpty: [ 
+		noteList selectFirst.
+		noteContent takeKeyboardFocus]
 ]
 
 { #category : #initialization }
