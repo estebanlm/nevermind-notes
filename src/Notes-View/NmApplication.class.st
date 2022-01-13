@@ -54,6 +54,18 @@ NmApplication >> buttonIconNamed: aString [
 	^ GtkRunLoop defer: [ GtkImage newIconForButtonNamed: aString ]
 ]
 
+{ #category : #running }
+NmApplication >> cleanProcesses [
+
+	(Smalltalk classNamed: #MorphicUIManager) 
+		ifNotNil: [ :clazz | clazz uiProcess ifNotNil: #terminate ].
+	(Smalltalk classNamed: #ProcessBrowser) 
+		ifNotNil: [ :clazz | 
+			clazz new processList
+				detect: [ :each | each name = 'SDL2 Event loop' ]
+				ifFound: [ :aProcess | aProcess terminate ]	 ]
+]
+
 { #category : #accessing }
 NmApplication >> defaultMainWindowExtent [
 
@@ -212,10 +224,7 @@ NmApplication >> start [
 	"Ensure exit when close"
 	window whenClosedDo: [ Smalltalk exitSuccess ].
 	"Kill unnecessary process that may be still there"
-	MorphicUIManager uiProcess ifNotNil: #terminate.
-	ProcessBrowser new processList
-		detect: [ :each | each name = 'SDL2 Event loop' ]
-		ifFound: [ :aProcess | aProcess terminate ]	
+	self cleanProcesses
 ]
 
 { #category : #'accessing resources' }

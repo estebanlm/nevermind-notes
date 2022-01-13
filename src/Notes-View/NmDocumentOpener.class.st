@@ -7,5 +7,5 @@ Class {
 { #category : #opening }
 NmDocumentOpener >> open: aName [		
 
-	WebBrowser openOn: aName
+	NoWebBrowser openOn: aName
 ]

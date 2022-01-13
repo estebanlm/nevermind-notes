@@ -13,7 +13,9 @@ NmDevelopmentPaths class >> isActive [
 { #category : #accessing }
 NmDevelopmentPaths >> repositoryDir [
 
-	^ (IceRepository registry detect: [ :each | each name = 'nevermind' ]) location
+	^ ((Smalltalk classNamed: #IceRepository) registry 
+		detect: [ :each | each name = 'nevermind-notes' ]) 
+		location
 ]
 
 { #category : #accessing }

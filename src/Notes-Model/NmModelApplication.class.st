@@ -42,7 +42,7 @@ NmModelApplication class >> initialize [
 { #category : #testing }
 NmModelApplication class >> isDevelopment [
 
-	^ Development
+	^ Development and: [ (Smalltalk classNamed: #IceRepository) notNil ]
 ]
 
 { #category : #'instance creation' }
