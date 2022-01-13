@@ -13,7 +13,7 @@ BaselineOfNotes >> baseline: spec [
 		self voyage: spec.
 		self persistenceQuery: spec.
 		self specGtk: spec.
-		self objCBridge: spec.
+		"self objCBridge: spec."
 		self stargate: spec.
 		
 		OSPlatform current isWindows 
