@@ -5,7 +5,7 @@ DateAndTime >> notesAsString [
 
 	^ String streamContents: [ :stream |
 		stream 
-			nextPutAll: self asDate epiceaBrowsersAsString;
+			nextPutAll: self asDate notesAsString;
 			nextPutAll: ', '.
 		self asTime 
 			print24: false
