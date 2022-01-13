@@ -9,3 +9,9 @@ NmDeploymentPaths class >> isActive [
 
 	^ NmModelApplication isDevelopment not
 ]
+
+{ #category : #accessing }
+NmDeploymentPaths >> resourcesDirectory [
+
+	^ FileLocator imageDirectory
+]

@@ -38,5 +38,5 @@ NmResourcePaths >> repositoryReference [
 { #category : #accessing }
 NmResourcePaths >> resourcesDirectory [
 
-	^ FileLocator imageDirectory
+	^ self subclassResponsibility
 ]
