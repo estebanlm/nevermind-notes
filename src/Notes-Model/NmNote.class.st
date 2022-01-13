@@ -168,7 +168,7 @@ NmNote >> firstLine [
 { #category : #accessing }
 NmNote >> humanReadableLastEditionDate [
 
-	^ (self lastEditionDate asDateAndTime + DateAndTime localTimeZone offset) epiceaBrowsersAsString 
+	^ (self lastEditionDate asDateAndTime + DateAndTime localTimeZone offset) notesAsString 
 ]
 
 { #category : #initialization }
