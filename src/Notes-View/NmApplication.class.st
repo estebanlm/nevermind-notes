@@ -73,6 +73,15 @@ NmApplication >> defaultMainWindowExtent [
 	^ 800@800
 ]
 
+{ #category : #initialization }
+NmApplication >> gtkEngineClass [
+
+	^ self class environment
+		at: #GtkEngine
+		ifPresent: [ :c | c ]
+		ifAbsent: [ self class environment at: #GtkApplication ]
+]
+
 { #category : #'accessing icons' }
 NmApplication >> iconNamed: aString [
 
@@ -100,7 +109,7 @@ NmApplication >> initializeBackend [
 
 	"Ensure the name of the application"
 	self isStandalone ifTrue: [ 
-		gtk := GtkApplication new initGtk3.
+		gtk := self gtkEngineClass new initGtk3.
 		GLibLibrary uniqueInstance gSetPrgName: self class applicationName.
 		gtk run ].
 	
