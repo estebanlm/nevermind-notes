@@ -15,20 +15,20 @@ BaselineOfNotes >> baseline: spec [
 		self specGtk: spec.
 		self objCBridge: spec.
 		self stargate: spec.
-		"self macPack: spec."
-		self osSubprocess: spec.
-		self osWinSubprocess: spec.
+		
+		OSPlatform current isWindows 
+			ifTrue: [ self osWinSubprocess: spec ]
+			ifFalse: [ self osSubprocess: spec ].
 
 		spec 
-			package: 'Nevermind-Model' with: [ 
+			package: 'Notes-Model' with: [ 
 				spec requires: #(
 					'ZTimestamp' 
 					'Voyage' 
 					'PersistenceQuery' 
-					'OSSubprocess' 
-					'OSWinSubprocess') ];
-			package: 'Nevermind-View' with: [ 
-				spec requires: #('Stargate') ] ]
+					'OSSubprocess') ];
+			package: 'Notes-View' with: [ 
+				spec requires: #('Stargate' 'Notes-Model') ] ]
 ]
 
 { #category : #'external projects' }
@@ -57,8 +57,10 @@ BaselineOfNotes >> osSubprocess: spec [
 { #category : #'external projects' }
 BaselineOfNotes >> osWinSubprocess: spec [
 		
-	spec baseline: 'OSWinSubprocess' with: [
-		spec repository: 'github://pharo-contributions/OSWinSubprocess:v1' ]
+	spec baseline: 'OSSubprocess' with: [
+		spec 
+			className: 'BaselineOfOSWinSubprocess';
+			repository: 'github://pharo-contributions/OSWinSubprocess:v1' ]
 ]
 
 { #category : #'external projects' }
