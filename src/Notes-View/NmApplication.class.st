@@ -73,15 +73,6 @@ NmApplication >> defaultMainWindowExtent [
 	^ 800@800
 ]
 
-{ #category : #initialization }
-NmApplication >> gtkEngineClass [
-
-	^ self class environment
-		at: #GtkEngine
-		ifPresent: [ :c | c ]
-		ifAbsent: [ self class environment at: #GtkApplication ]
-]
-
 { #category : #'accessing icons' }
 NmApplication >> iconNamed: aString [
 
@@ -98,20 +89,17 @@ NmApplication >> iconProvider [
 NmApplication >> initialize [
 
 	super initialize.
-	self initializeBackend.
-	self initializeModel.
 	self initializeScheduler.
 ]
 
 { #category : #initialization }
 NmApplication >> initializeBackend [
-	| gtk |
 
 	"Ensure the name of the application"
 	self isStandalone ifTrue: [ 
-		gtk := self gtkEngineClass new initGtk3.
-		GLibLibrary uniqueInstance gSetPrgName: self class applicationName.
-		gtk run ].
+		GEngine ensureEngine
+			whenInitializedDo: [ GLibLibrary uniqueInstance gSetPrgName: self class applicationName ];
+			run ].
 	
 	self useBackend: #Gtk with: NmGtkConfiguration new
 ]
@@ -119,7 +107,8 @@ NmApplication >> initializeBackend [
 { #category : #initialization }
 NmApplication >> initializeModel [
 	
-	NmModelApplication reset
+	NmModelApplication reset.
+	NmModelApplication current activateRepository
 ]
 
 { #category : #initialization }
@@ -226,14 +215,8 @@ NmApplication >> schedule: aBlock [
 
 { #category : #running }
 NmApplication >> start [
-	| window |
 
-	window := (self new: NmNotebookPresenter) openWithSpec.
-	standalone ifFalse: [ ^ self ].
-	"Ensure exit when close"
-	window whenClosedDo: [ Smalltalk exitSuccess ].
-	"Kill unnecessary process that may be still there"
-	self cleanProcesses
+	(self new: NmNotebookPresenter) openWithSpec
 ]
 
 { #category : #'accessing resources' }

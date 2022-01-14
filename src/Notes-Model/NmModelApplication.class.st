@@ -4,7 +4,8 @@ Class {
 	#instVars : [
 		'repository',
 		'paths',
-		'activeBook'
+		'activeBook',
+		'mutex'
 	],
 	#classVars : [
 		'Current',
@@ -67,9 +68,11 @@ NmModelApplication >> activateBook: aBook [
 NmModelApplication >> activateRepository [
 	| reference |
 	
-	repository ifNotNil: [ repository close ].
-	reference := self paths repositoryReference.
-	repository := VoEJDBRepository on: reference
+	mutex critical: [ 
+		repository ifNotNil: [ repository close ].
+		reference := self paths repositoryReference.
+		EJDBLibrary uniqueInstance init.
+		repository := VoEJDBRepository on: reference ]
 ]
 
 { #category : #accessing }
@@ -92,19 +95,22 @@ NmModelApplication >> allBooks [
 { #category : #accessing }
 NmModelApplication >> defaultBook [
 
-	^ self allBooks detect: [ :each | each isDefault ]
+	^ self allBooks
+		  detect: [ :each | each isDefault ]
+		  ifNone: [ self ensureDefaultBook ]
 ]
 
 { #category : #private }
 NmModelApplication >> ensureDefaultBook [
 
-	NmBook newDefault save
+	^ NmBook newDefault save
 ]
 
 { #category : #initialization }
 NmModelApplication >> initialize [
 
 	super initialize.
+	mutex := Mutex new.
 	paths := NmResourcePaths newActive
 ]
 
