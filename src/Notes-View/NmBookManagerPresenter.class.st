@@ -61,7 +61,7 @@ NmBookManagerPresenter >> doAddBook [
 	dialog := self application newRequest
 		title: 'New Book';
 		label: 'Book name';
-		openDialogWithSpecParent: self window.
+		openDialogWithParent: self window.
 	dialog isOk ifFalse: [ ^ self ].
 	
 	book := NmBook newName: dialog presenter text trimmed.
@@ -83,7 +83,7 @@ NmBookManagerPresenter >> doRemoveSelectedBook [
 		label: (('Remove book {1} and all its notes?
 WARNING: You cannot undo this action!') format: { book name });
 		acceptLabel: 'Remove';
-		openDialogWithSpecParent: self window.
+		openDialogWithParent: self window.
 	dialog isOk ifFalse: [ ^ self ].
 	
 	book remove.
@@ -102,7 +102,7 @@ NmBookManagerPresenter >> doRenameSelectedBook [
 		label: ('Rename {1} to:' format: { book name });
 		text: book name;
 		acceptLabel: 'Rename';
-		openModalWithSpecParent: self window.
+		openModalWithParent: self window.
 		
 	(newName isEmptyOrNil or: [ newName = book name ])
 		ifTrue: [ ^ self ].

@@ -90,7 +90,7 @@ NmNotebookPresenter >> doMoveNote [
 NmNotebookPresenter >> doOpenBook [
 	
 	(NmBookManagerPresenter newApplication: self application)
-		openDialogWithSpecParent: self window
+		openModalWithParent: self window
 ]
 
 { #category : #actions }
@@ -114,7 +114,7 @@ NmNotebookPresenter >> doRemoveSelected [
 		title: 'Delete Note';
 		label: ('You are about to delete "{1}".' format: { selectedNote firstLine });
 		acceptLabel: 'Delete';
-		openModalWithSpecParent: self window.
+		openModalWithParent: self window.
 	ok ifFalse: [ ^ self ].
 	
 	self selectedNote remove.

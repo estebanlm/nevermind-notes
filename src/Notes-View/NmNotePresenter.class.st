@@ -68,7 +68,7 @@ NmNotePresenter >> doExport [
 			selectedIndex: 1; 
 		addBooleanChoice: 'Open exported document' default: true;
 		currentName: self note fileName;
-		openModalWithSpecParent: self window.
+		openModalWithParent: self window.
 
 	export ifNil: [ ^ self ].
 	
@@ -94,7 +94,7 @@ NmNotePresenter >> doMoveNote [
 			reject: [ :each | each voyageId = self note bookId ])
 			sorted: #name ascending);
 		display: [ :aBook | aBook name ];
-		openModalWithSpecParent: self window.
+		openModalWithParent: self window.
 	book ifNil: [ ^ self ].
 	
 	self application 

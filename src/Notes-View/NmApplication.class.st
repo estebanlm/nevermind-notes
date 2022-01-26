@@ -216,7 +216,7 @@ NmApplication >> schedule: aBlock [
 { #category : #running }
 NmApplication >> start [
 
-	(self new: NmNotebookPresenter) openWithSpec
+	(self new: NmNotebookPresenter) open
 ]
 
 { #category : #'accessing resources' }
