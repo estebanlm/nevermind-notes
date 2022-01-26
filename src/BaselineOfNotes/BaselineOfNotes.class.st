@@ -15,6 +15,7 @@ BaselineOfNotes >> baseline: spec [
 		self specGtk: spec.
 		"self objCBridge: spec."
 		self stargate: spec.
+		self gspell: spec.
 		
 		OSPlatform current isWindows 
 			ifTrue: [ self osWinSubprocess: spec ]
@@ -26,9 +27,18 @@ BaselineOfNotes >> baseline: spec [
 					'ZTimestamp' 
 					'Voyage' 
 					'PersistenceQuery' 
-					'OSSubprocess') ];
+					'OSSubprocess'
+					'Gspell') ];
 			package: 'Notes-View' with: [ 
 				spec requires: #('Stargate' 'Notes-Model') ] ]
+]
+
+{ #category : #'external projects' }
+BaselineOfNotes >> gspell: spec [
+
+	spec
+		baseline: 'Gspell'
+		with: [ spec repository: 'github://estebanlm/gspell' ]
 ]
 
 { #category : #'external projects' }
