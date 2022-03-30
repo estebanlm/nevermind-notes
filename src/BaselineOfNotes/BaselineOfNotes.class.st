@@ -29,6 +29,8 @@ BaselineOfNotes >> baseline: spec [
 					'PersistenceQuery' 
 					'OSSubprocess'
 					'Gspell') ];
+			package: 'Notes-Spec' with: [ 
+				spec requires: #('SpecGtk') ];
 			package: 'Notes-View' with: [ 
 				spec requires: #('Stargate' 'Notes-Model') ] ]
 ]
