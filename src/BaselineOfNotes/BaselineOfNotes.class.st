@@ -30,7 +30,7 @@ BaselineOfNotes >> baseline: spec [
 					'OSSubprocess'
 					'Gspell') ];
 			package: 'Notes-Spec' with: [ 
-				spec requires: #('SpecGtk') ];
+				spec requires: #('SpecGtk' 'Gspell') ];
 			package: 'Notes-View' with: [ 
 				spec requires: #('Stargate' 'Notes-Model') ] ]
 ]
