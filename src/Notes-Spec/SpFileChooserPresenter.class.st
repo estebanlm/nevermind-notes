@@ -7,7 +7,7 @@ Class {
 		'cancelLabel',
 		'overrideConfirmation'
 	],
-	#category : #'Notes-View-Spec'
+	#category : #'Notes-Spec'
 }
 
 { #category : #specs }

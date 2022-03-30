@@ -4,7 +4,7 @@ Class {
 	#instVars : [
 		'spellTextBuffer'
 	],
-	#category : #'Notes-View-Spec'
+	#category : #'Notes-Spec'
 }
 
 { #category : #building }

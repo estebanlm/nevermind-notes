@@ -8,7 +8,7 @@ Class {
 		'#styleScheme => ObservableSlot',
 		'#spellLanguage => ObservableSlot'
 	],
-	#category : #'Notes-View-Spec'
+	#category : #'Notes-Spec'
 }
 
 { #category : #specs }

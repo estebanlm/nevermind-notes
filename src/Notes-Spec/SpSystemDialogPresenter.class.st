@@ -1,5 +1,5 @@
 Class {
 	#name : #SpSystemDialogPresenter,
 	#superclass : #SpDialogWindowPresenter,
-	#category : #'Notes-View-Spec'
+	#category : #'Notes-Spec'
 }

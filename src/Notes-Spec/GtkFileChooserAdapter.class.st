@@ -5,7 +5,7 @@ Class {
 		'GtkFileChooserAction',
 		'GtkResponseType'
 	],
-	#category : #'Notes-View-Spec'
+	#category : #'Notes-Spec'
 }
 
 { #category : #adding }
