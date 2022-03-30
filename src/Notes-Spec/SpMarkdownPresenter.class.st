@@ -85,9 +85,9 @@ SpMarkdownPresenter >> styleScheme [
 ]
 
 { #category : #accessing }
-SpMarkdownPresenter >> styleScheme: anObject [
+SpMarkdownPresenter >> styleScheme: aStyleScheme [
 
-	styleScheme := anObject
+	styleScheme := aStyleScheme
 ]
 
 { #category : #accessing }
